@@ -1,7 +1,0 @@
-## instala la libreria experta
-
-pip install experta
-
-### si corres el codigo y te da error instala o actualiza frozendict que es una dependecia de experta
-
-pip install --upgrade frozendict
