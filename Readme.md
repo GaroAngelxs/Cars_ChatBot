@@ -13,10 +13,8 @@ Lincón Santana C20760763
 ## Caracteristicas
 
 - Recomendación personalizada según necesidades del usuario.
-- Consulta en tiempo real a APIs externas para obtener datos de autos.
 - Uso de modelos de lenguaje para respuestas más naturales.
 - Interfaz de usuario
-- Análisis de ventajas y desventajas por modelo.
 
 ---
 
@@ -28,3 +26,5 @@ Lincón Santana C20760763
 
 ### Instalación de dependencias
 
+- pip install experta
+- pip install --update frozendict
