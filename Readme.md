@@ -1,6 +1,8 @@
 # Chatbot de Recomendación de Autos en Python
 
-Este proyecto es un *Chatbot de recomendación de autos* desarrollado en Python, que utiliza *APIs de automóviles* y un modelo de lenguaje para interactuar con los usuarios y recomendar autos según sus necesidades. Además, incluye una interfaz de usuario gráfica que permite a los usuarios interactuar fácilmente con el chatbot.
+El propósito del Sistema Experto Asistente de Mantenimiento Automotriz es ayudar a los usuarios a identificar, diagnosticar y prevenir fallas comunes en sus vehículos, ofreciendo recomendaciones personalizadas de mantenimiento basadas en síntomas, condiciones del vehículo y hábitos de conducción.
+El sistema busca simular el razonamiento de un mecánico experto, guiando al usuario paso a paso en el proceso de detección de problemas y sugerencia de soluciones.
+
 
 Realizado por: 
 Angel Garcia Romero 22760920
