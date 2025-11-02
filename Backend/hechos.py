@@ -1,26 +1,29 @@
 from experta import Fact
 
-
 class Vehiculo(Fact):
-    """Hecho estatico del vehículo"""
+    """Información del vehículo"""
     pass
 
 class Sintoma(Fact):
-    """Síntoma del checkbox que el usuario selecciono"""
+    """Síntoma del vehículo"""
+    pass
+
+class Sistema(Fact):
+    """Sistema del vehículo con problema"""
     pass
 
 class Estado(Fact):
-    """Respuesta del usuario a una pregunta"""
+    """Estado de un componente"""
     pass
 
 class Pregunta(Fact):
-    """Hecho especial que el motor genera para el chatbot """
+    """Pregunta al usuario"""
     pass
 
 class Diagnostico(Fact):
-    """La conclusion final del sistema"""
+    """Diagnóstico final"""
     pass
 
 class Accion(Fact):
-    """Hecho de control para el motor."""
+    """Acción del sistema"""
     pass
