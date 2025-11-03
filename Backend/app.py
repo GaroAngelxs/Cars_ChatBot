@@ -25,6 +25,7 @@ class Coordinador:
         if not self.sistemas_activados:
             if respuesta:
                 self.router.declare(Estado(clave=respuesta['clave'], valor=respuesta['valor']))
+                self.router.run()
             
             self.router.run()
             
