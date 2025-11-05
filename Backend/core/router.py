@@ -22,6 +22,7 @@ class RouterDiagnosticos(SistemaBase):
             texto="¿Qué síntomas presenta su vehículo? (puede elegir varios separados por coma)",
             opciones=[
                 'no_arranca',
+                'se_apaga',
                 'se_calia', 
                 'hace_ruidos_raros', 
                 'pierde_potencia', 
@@ -46,7 +47,7 @@ class RouterDiagnosticos(SistemaBase):
             
             # Activar sistemas correspondientes a CADA síntoma
             for sintoma in sintomas:
-                if sintoma in ['no_arranca', 'pierde_potencia', 'humo_excesivo']:
+                if sintoma in ['no_arranca', 'se_apaga']:
                     self.declare(Sistema(area='motor'))
                     self.sistemas_activados.add('motor')
                     print(f"   ✅ Sistema activado: Motor")
