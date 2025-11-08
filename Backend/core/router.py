@@ -19,7 +19,7 @@ class RouterDiagnosticos(SistemaBase):
     def preguntar_sintomas_generales(self):
         self.declare(Pregunta(
             clave='sintoma_general',
-            texto="¿Qué síntomas presenta su vehículo? (puede elegir varios separados por coma)",
+            texto="¿Qué síntomas presenta su vehículo?",
             opciones=[
                 'no_arranca',
                 'se_apaga',

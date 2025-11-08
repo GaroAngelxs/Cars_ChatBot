@@ -39,7 +39,6 @@ class Coordinador:
                 return {'diagnosticos': [{'causa': 'No se identificaron sistemas afectados.', 'solucion': 'Intente con otros síntomas.', 'severidad': 'Baja'}]}
             
             print(f"Sistemas activados por el router: {self.sistemas_activados}")
-
             respuesta = None
 
         # --- Fase 2: Ejecutar SISTEMAS ESPECIALISTAS ---
@@ -90,7 +89,6 @@ class Coordinador:
         estados_transferidos = 0
         for hecho in origen.facts.values():
             if isinstance(hecho, Estado):
-                # Para clases con campos dinámicos
                 hecho_dict = {k: v for k, v in hecho.items()}
                 destino.declare(Estado(**hecho_dict))
                 estados_transferidos += 1
@@ -99,21 +97,32 @@ class Coordinador:
         print(f"Hechos transferidos a {destino.__class__.__name__}: {estados_transferidos} estados")
 
 
-class App(tk.Tk):
+class ModernApp(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Asistente de Diagnóstico Automotriz")
-        self.geometry("600x650")
+        self.title("🔧 Asistente Mecánico Inteligente")
+        self.geometry("800x700")
+        self.configure(bg='#f8f9fa')
         
-        # Estilo
-        style = ttk.Style(self)
-        style.theme_use('clam')
-        style.configure("TButton", padding=6, relief="flat", background="#007bff", foreground="white")
-        style.map("TButton", background=[('active', '#0056b3')])
-        style.configure("TLabel", padding=5, font=('Helvetica', 10))
-        style.configure("Header.TLabel", font=('Helvetica', 16, 'bold'))
-
-        self.container = ttk.Frame(self)
+        # Configurar estilo moderno
+        self._configurar_estilos()
+        
+        # Frame principal con gradiente
+        self.main_container = tk.Frame(self, bg='#f8f9fa')
+        self.main_container.pack(fill="both", expand=True, padx=0, pady=0)
+        
+        # Header con gradiente
+        self.header = tk.Frame(self.main_container, bg='#2c3e50', height=80)
+        self.header.pack(fill="x", padx=0, pady=0)
+        self.header.pack_propagate(False)
+        
+        ttk.Label(self.header, text="🔧 Asistente Mecánico Inteligente", 
+                 style="Header.TLabel", background='#2c3e50').pack(expand=True)
+        ttk.Label(self.header, text="Sistema Experto de Diagnóstico Automotriz", 
+                 style="Subheader.TLabel", background='#2c3e50').pack(expand=True)
+        
+        # Container para los frames
+        self.container = ttk.Frame(self.main_container, style="Card.TFrame")
         self.container.pack(fill="both", expand=True, padx=20, pady=20)
         
         self.frames = {}
@@ -127,35 +136,74 @@ class App(tk.Tk):
         
         self.mostrar_frame(FrameVehiculo)
 
+    def _configurar_estilos(self):
+        style = ttk.Style()
+        style.theme_use('clam')
+        
+        # Colores modernos
+        colores = {
+            'primary': '#3498db',
+            'success': '#2ecc71',
+            'warning': '#f39c12',
+            'danger': '#e74c3c',
+            'dark': '#2c3e50',
+            'light': '#ecf0f1'
+        }
+        
+        # Configurar estilos
+        style.configure("Card.TFrame", background='white', relief='raised', borderwidth=1)
+        style.configure("Header.TLabel", font=('Segoe UI', 24, 'bold'), foreground='white')
+        style.configure("Subheader.TLabel", font=('Segoe UI', 12), foreground='#bdc3c7')
+        style.configure("Title.TLabel", font=('Segoe UI', 18, 'bold'), foreground='#2c3e50')
+        style.configure("Normal.TLabel", font=('Segoe UI', 11), foreground='#34495e')
+        
+        # Botones modernos
+        style.configure("Primary.TButton", font=('Segoe UI', 11, 'bold'), 
+                       padding=(20, 10), background=colores['primary'], 
+                       foreground='white', borderwidth=0, focuscolor='none')
+        style.map("Primary.TButton",
+                 background=[('active', '#2980b9'), ('pressed', '#21618c')])
+        
+        style.configure("Success.TButton", font=('Segoe UI', 11, 'bold'),
+                       padding=(20, 10), background=colores['success'],
+                       foreground='white', borderwidth=0)
+        style.map("Success.TButton",
+                 background=[('active', '#27ae60'), ('pressed', '#219653')])
+        
+        # Entradas modernas
+        style.configure("Modern.TEntry", font=('Segoe UI', 11), 
+                       padding=(10, 8), borderwidth=1, relief='flat',
+                       fieldbackground='#f8f9fa')
+        
+        # Checkbuttons y Radiobuttons modernos
+        style.configure("Modern.TCheckbutton", font=('Segoe UI', 10), 
+                       background='white', foreground='#2c3e50')
+        style.configure("Modern.TRadiobutton", font=('Segoe UI', 10),
+                       background='white', foreground='#2c3e50')
+
     def mostrar_frame(self, frame_clase):
-        """Muestra el frame (pantalla) solicitado"""
         frame = self.frames[frame_clase]
         frame.tkraise()
 
     def iniciar_diagnostico(self, vehiculo_data):
-        """Se llama desde FrameVehiculo"""
         vehiculo = Vehiculo(
             marca=vehiculo_data['marca'] or "Desconocido",
             modelo=vehiculo_data['modelo'] or "Desconocido",
             anio=vehiculo_data['anio'] or "2000"
         )
         self.coordinador = Coordinador(vehiculo)
-        
         resultado = self.coordinador.procesar()
         self.procesar_resultado(resultado)
 
     def enviar_respuesta(self, clave, valor):
-        """Se llama desde FramePregunta"""
         if not valor:
-             messagebox.showwarning("Opción Requerida", "Por favor, selecciona al menos una opción.")
-             return
-             
+            messagebox.showwarning("Opción Requerida", "Por favor, selecciona al menos una opción.")
+            return
         respuesta = {'clave': clave, 'valor': valor}
         resultado = self.coordinador.procesar(respuesta)
         self.procesar_resultado(resultado)
 
     def procesar_resultado(self, resultado):
-        """Decide qué pantalla mostrar basado en el resultado del motor"""
         if 'pregunta' in resultado:
             self.frames[FramePregunta].actualizar_pregunta(resultado['pregunta'])
             self.mostrar_frame(FramePregunta)
@@ -166,38 +214,56 @@ class App(tk.Tk):
             messagebox.showerror("Error", "Ocurrió un error inesperado en el motor.")
 
     def reiniciar(self):
-        """Reinicia la aplicación a la pantalla inicial"""
         self.coordinador = None
         self.pregunta_actual = None
         self.frames[FrameVehiculo].limpiar_campos()
         self.mostrar_frame(FrameVehiculo)
 
+
 class FrameVehiculo(ttk.Frame):
     def __init__(self, parent, controller):
-        super().__init__(parent)
+        super().__init__(parent, style="Card.TFrame")
         self.controller = controller
+        self._crear_interfaz()
+
+    def _crear_interfaz(self):
+        # Título
+        ttk.Label(self, text="🚗 Datos del Vehículo", style="Title.TLabel").pack(pady=30)
         
-        ttk.Label(self, text="Bienvenido al Asistente", style="Header.TLabel").pack(pady=10)
-        ttk.Label(self, text="Para comenzar, ingrese los datos de su vehículo:").pack(pady=5)
+        ttk.Label(self, text="Complete la información de su vehículo para comenzar el diagnóstico:", 
+                 style="Normal.TLabel").pack(pady=10)
         
-        form_frame = ttk.Frame(self)
-        form_frame.pack(pady=10, fill='x', padx=20)
+        # Formulario en contenedor con sombra
+        form_container = ttk.Frame(self, style="Card.TFrame")
+        form_container.pack(pady=20, padx=40, fill='x')
         
-        ttk.Label(form_frame, text="Marca:").grid(row=0, column=0, sticky='w', padx=5, pady=5)
-        self.marca_var = tk.StringVar()
-        ttk.Entry(form_frame, textvariable=self.marca_var).grid(row=0, column=1, sticky='ew', padx=5, pady=5)
+        # Campos del formulario
+        campos = [
+            ("🏷️ Marca:", "marca_var"),
+            ("🚀 Modelo:", "modelo_var"), 
+            ("📅 Año:", "anio_var")
+        ]
         
-        ttk.Label(form_frame, text="Modelo:").grid(row=1, column=0, sticky='w', padx=5, pady=5)
-        self.modelo_var = tk.StringVar()
-        ttk.Entry(form_frame, textvariable=self.modelo_var).grid(row=1, column=1, sticky='ew', padx=5, pady=5)
+        for i, (texto, var_name) in enumerate(campos):
+            row_frame = ttk.Frame(form_container, style="Card.TFrame")
+            row_frame.pack(fill='x', pady=12)
+            
+            ttk.Label(row_frame, text=texto, style="Normal.TLabel", 
+                     width=12, anchor='e').pack(side='left', padx=(0, 10))
+            
+            var = tk.StringVar()
+            setattr(self, var_name, var)
+            
+            entry = ttk.Entry(row_frame, textvariable=var, style="Modern.TEntry", 
+                             font=('Segoe UI', 11))
+            entry.pack(side='left', fill='x', expand=True, ipady=8)
         
-        ttk.Label(form_frame, text="Año:").grid(row=2, column=0, sticky='w', padx=5, pady=5)
-        self.anio_var = tk.StringVar()
-        ttk.Entry(form_frame, textvariable=self.anio_var).grid(row=2, column=1, sticky='ew', padx=5, pady=5)
+        # Botón de inicio
+        btn_frame = ttk.Frame(self, style="Card.TFrame")
+        btn_frame.pack(pady=30)
         
-        form_frame.columnconfigure(1, weight=1)
-        
-        ttk.Button(self, text="Comenzar Diagnóstico", command=self.iniciar).pack(pady=20, ipadx=10, ipady=5)
+        ttk.Button(btn_frame, text="🎯 Comenzar Diagnóstico", 
+                  command=self.iniciar, style="Primary.TButton").pack(pady=10)
 
     def iniciar(self):
         datos = {
@@ -205,6 +271,9 @@ class FrameVehiculo(ttk.Frame):
             'modelo': self.modelo_var.get(),
             'anio': self.anio_var.get()
         }
+        if not all(datos.values()):
+            messagebox.showwarning("Datos Incompletos", "Por favor, complete todos los campos.")
+            return
         self.controller.iniciar_diagnostico(datos)
         
     def limpiar_campos(self):
@@ -215,25 +284,55 @@ class FrameVehiculo(ttk.Frame):
 
 class FramePregunta(ttk.Frame):
     def __init__(self, parent, controller):
-        super().__init__(parent)
+        super().__init__(parent, style="Card.TFrame")
         self.controller = controller
         self.pregunta_actual = None
         self.opciones_vars = []
+        self._crear_interfaz()
+
+    def _crear_interfaz(self):
+        # Icono de pregunta
+        self.icono_label = ttk.Label(self, text="❓", font=('Segoe UI', 24),
+                                background='white')
+        self.icono_label.pack(pady=20)
         
-        self.label_pregunta = ttk.Label(self, text="Pregunta...", style="Header.TLabel", wraplength=450)
-        self.label_pregunta.pack(pady=20)
+        # Pregunta
+        self.label_pregunta = ttk.Label(self, text="Pregunta...", 
+                                    style="Title.TLabel", wraplength=600,
+                                    justify='center')
+        self.label_pregunta.pack(pady=10, padx=30)
         
-        self.opciones_frame = ttk.Frame(self)
-        self.opciones_frame.pack(pady=10, fill='x', padx=30)
+        # Contenedor de opciones con scroll
+        opciones_container = ttk.Frame(self, style="Card.TFrame")
+        opciones_container.pack(pady=20, padx=40, fill='both', expand=True)
         
-        self.boton_siguiente = ttk.Button(self, text="Siguiente", command=self.responder)
-        self.boton_siguiente.pack(pady=20, ipadx=10, ipady=5)
+        # Canvas y scrollbar para opciones largas
+        self.canvas = tk.Canvas(opciones_container, bg='white', highlightthickness=0)
+        scrollbar = ttk.Scrollbar(opciones_container, orient="vertical", command=self.canvas.yview)
+        self.scrollable_frame = ttk.Frame(self.canvas, style="Card.TFrame")
+        
+        self.scrollable_frame.bind(
+            "<Configure>",
+            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        )
+        
+        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
+        self.canvas.configure(yscrollcommand=scrollbar.set)
+        
+        self.canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        
+        # Botón siguiente
+        self.boton_siguiente = ttk.Button(self, text="➡️ Siguiente", 
+                                        command=self.responder, style="Success.TButton")
+        self.boton_siguiente.pack(pady=20, ipadx=20, ipady=10)
 
     def actualizar_pregunta(self, pregunta):
         self.pregunta_actual = pregunta
         self.label_pregunta.config(text=pregunta['texto'])
         
-        for widget in self.opciones_frame.winfo_children():
+        # Limpiar opciones anteriores
+        for widget in self.scrollable_frame.winfo_children():
             widget.destroy()
         
         self.opciones_vars = []
@@ -243,17 +342,24 @@ class FramePregunta(ttk.Frame):
         if es_multiselect:
             for opcion in pregunta['opciones']:
                 var = tk.StringVar(value="")
-                cb = ttk.Checkbutton(self.opciones_frame, text=opcion.replace('_', ' '),
-                                     variable=var, onvalue=opcion, offvalue="")
-                cb.pack(anchor='w', pady=3)
+                cb = ttk.Checkbutton(self.scrollable_frame, 
+                                text=opcion.replace('_', ' '),
+                                variable=var, 
+                                onvalue=opcion, 
+                                offvalue="",
+                                style="Modern.TCheckbutton")
+                cb.pack(anchor='w', pady=8, padx=10)  # Más espacio: pady=8
                 self.opciones_vars.append(var)
         else:
             self.respuesta_var = tk.StringVar(value="")
             for opcion in pregunta['opciones']:
-                rb = ttk.Radiobutton(self.opciones_frame, text=opcion.replace('_', ' '),
-                                     variable=self.respuesta_var, value=opcion)
-                rb.pack(anchor='w', pady=3)
-            self.opciones_vars = [self.respuesta_var] 
+                rb = ttk.Radiobutton(self.scrollable_frame, 
+                                text=opcion.replace('_', ' '),
+                                variable=self.respuesta_var, 
+                                value=opcion,
+                                style="Modern.TRadiobutton")
+                rb.pack(anchor='w', pady=10, padx=15)  # Más espacio: pady=10, padx=15
+            self.opciones_vars = [self.respuesta_var]
 
     def responder(self):
         clave = self.pregunta_actual['clave']
@@ -263,39 +369,75 @@ class FramePregunta(ttk.Frame):
         
         if es_multiselect:
             seleccionados = [var.get() for var in self.opciones_vars if var.get()]
+            if not seleccionados:
+                messagebox.showwarning("Selección Requerida", "Por favor, seleccione al menos un síntoma.")
+                return
             valor = ",".join(seleccionados)
         else:
-            valor = self.opciones_vars[0].get() 
+            valor = self.opciones_vars[0].get()
+            if not valor:
+                messagebox.showwarning("Selección Requerida", "Por favor, seleccione una opción.")
+                return
             
         self.controller.enviar_respuesta(clave, valor)
 
 
 class FrameDiagnostico(ttk.Frame):
     def __init__(self, parent, controller):
-        super().__init__(parent)
+        super().__init__(parent, style="Card.TFrame")
         self.controller = controller
-        
-        ttk.Label(self, text="Diagnóstico Final", style="Header.TLabel").pack(pady=10)
-        
-        self.text_resultados = tk.Text(self, height=20, width=60, wrap='word',
-                                       borderwidth=0, highlightthickness=0)
-        self.text_resultados.pack(pady=10, padx=20, fill="both", expand=True)
+        self._crear_interfaz()
 
-        self.text_resultados.tag_configure("sistema", font=('Helvetica', 12, 'bold'), foreground="#007bff")
-        self.text_resultados.tag_configure("causa", font=('Helvetica', 10, 'bold'))
-        self.text_resultados.tag_configure("normal", font=('Helvetica', 10))
-        self.text_resultados.tag_configure("severidad", font=('Helvetica', 9, 'italic'), foreground="#dc3545")
+    def _crear_interfaz(self):
+        # Header de resultados
+        ttk.Label(self, text="📊 Diagnóstico Final", style="Title.TLabel").pack(pady=20)
         
-        self.text_resultados.config(state='disabled') 
+        # Contenedor de resultados con scroll
+        result_container = ttk.Frame(self, style="Card.TFrame")
+        result_container.pack(fill="both", expand=True, padx=20, pady=10)
         
-        ttk.Button(self, text="Realizar Otro Diagnóstico", command=lambda: controller.reiniciar()).pack(pady=20)
+        # Text area con mejor estilo
+        self.text_resultados = tk.Text(result_container, height=20, width=70, wrap='word',
+                                      font=('Segoe UI', 10), bg='#f8f9fa', 
+                                      borderwidth=0, highlightthickness=0,
+                                      padx=15, pady=15)
+        
+        scrollbar = ttk.Scrollbar(result_container, orient="vertical", command=self.text_resultados.yview)
+        self.text_resultados.configure(yscrollcommand=scrollbar.set)
+        
+        self.text_resultados.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        
+        # Configurar tags para formato
+        self.text_resultados.tag_configure("sistema", font=('Segoe UI', 14, 'bold'), 
+                                         foreground="#2c3e50", spacing3=10)
+        self.text_resultados.tag_configure("causa", font=('Segoe UI', 11, 'bold'),
+                                         foreground="#34495e")
+        self.text_resultados.tag_configure("normal", font=('Segoe UI', 10),
+                                         foreground="#2c3e50")
+        self.text_resultados.tag_configure("severidad_alta", font=('Segoe UI', 9, 'bold'),
+                                         foreground="#e74c3c")
+        self.text_resultados.tag_configure("severidad_media", font=('Segoe UI', 9, 'bold'),
+                                         foreground="#f39c12")
+        self.text_resultados.tag_configure("severidad_baja", font=('Segoe UI', 9, 'bold'),
+                                         foreground="#27ae60")
+        
+        self.text_resultados.config(state='disabled')
+        
+        # Botones de acción
+        btn_frame = ttk.Frame(self, style="Card.TFrame")
+        btn_frame.pack(pady=20)
+        
+        ttk.Button(btn_frame, text="🔄 Realizar Otro Diagnóstico", 
+                  command=lambda: self.controller.reiniciar(), style="Primary.TButton").pack(side='left', padx=10)
 
     def mostrar_diagnosticos(self, diagnosticos):
-        self.text_resultados.config(state='normal') 
-        self.text_resultados.delete('1.0', tk.END) 
+        self.text_resultados.config(state='normal')
+        self.text_resultados.delete('1.0', tk.END)
         
         if not diagnosticos:
-            self.text_resultados.insert(tk.END, "No se encontraron diagnósticos para los síntomas proporcionados.", "normal")
+            self.text_resultados.insert(tk.END, "✅ No se encontraron diagnósticos para los síntomas proporcionados.\n\n", "normal")
+            self.text_resultados.insert(tk.END, "El vehículo parece estar en buen estado o los síntomas no son críticos.", "normal")
             self.text_resultados.config(state='disabled')
             return
 
@@ -303,19 +445,25 @@ class FrameDiagnostico(ttk.Frame):
             sistema = diag.get('sistema', 'General')
             causa = diag.get('causa', 'N/A')
             solucion = diag.get('solucion', 'N/A')
-            severidad = diag.get('severidad', 'N/A')
+            severidad = diag.get('severidad', 'Media').lower()
 
-            self.text_resultados.insert(tk.END, f"SISTEMA: {sistema}\n", "sistema")
-            self.text_resultados.insert(tk.END, f"  Gravedad: {severidad}\n", "severidad")
-            self.text_resultados.insert(tk.END, f"  Causa: ", "causa")
-            self.text_resultados.insert(tk.END, f"{causa}\n", "normal")
-            self.text_resultados.insert(tk.END, f"  Solución: ", "causa")
-            self.text_resultados.insert(tk.END, f"{solucion}\n\n", "normal")
+            # Determinar tag de severidad
+            severidad_tag = f"severidad_{severidad}"
+            if severidad_tag not in ["severidad_alta", "severidad_media", "severidad_baja"]:
+                severidad_tag = "severidad_media"
+
+            self.text_resultados.insert(tk.END, f"🔧 {sistema}\n", "sistema")
+            self.text_resultados.insert(tk.END, f"   Nivel de gravedad: ", "normal")
+            self.text_resultados.insert(tk.END, f"{severidad.upper()}\n", severidad_tag)
+            self.text_resultados.insert(tk.END, f"   🔍 Causa identificada:\n", "causa")
+            self.text_resultados.insert(tk.END, f"   {causa}\n\n", "normal")
+            self.text_resultados.insert(tk.END, f"   🛠️ Solución recomendada:\n", "causa")
+            self.text_resultados.insert(tk.END, f"   {solucion}\n\n", "normal")
+            self.text_resultados.insert(tk.END, "─" * 30 + "\n\n", "normal")
             
-        self.text_resultados.config(state='disabled') 
+        self.text_resultados.config(state='disabled')
 
 
 if __name__ == "__main__":
-    app = App()
+    app = ModernApp()
     app.mainloop()
-
