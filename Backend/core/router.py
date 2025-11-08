@@ -47,8 +47,15 @@ class RouterDiagnosticos(SistemaBase):
             
             # Activar sistemas correspondientes a CADA síntoma
             for sintoma in sintomas:
-                if sintoma in ['no_arranca', 'se_apaga']:
+                if sintoma == 'no_arranca':
                     self.declare(Sistema(area='motor'))
+                    self.declare(Estado(clave='no_arranca', valor='si'))
+                    self.sistemas_activados.add('motor')
+                    print(f"   ✅ Sistema activado: Motor")
+
+                elif sintoma == 'se_apaga':
+                    self.declare(Sistema(area='motor'))
+                    self.declare(Estado(clave='se_apaga', valor='si'))
                     self.sistemas_activados.add('motor')
                     print(f"   ✅ Sistema activado: Motor")
                     

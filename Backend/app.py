@@ -84,13 +84,19 @@ class Coordinador:
     def _transferir_hechos(self, origen, destino, sistema_nombre):
         """Transfiere hechos relevantes del router al especialista"""
         destino.declare(self.vehiculo)
-        
         destino.declare(Sistema(area=sistema_nombre))
         
-    
-        for sintoma in origen.obtener_sintomas_ingresados():
-            destino.declare(Estado(clave=sintoma, valor=True)) 
-        print(f"Hechos transferidos a {destino.__class__.__name__}")
+        # Transferir TODOS los hechos Estado del router
+        estados_transferidos = 0
+        for hecho in origen.facts.values():
+            if isinstance(hecho, Estado):
+                # Para clases con campos dinámicos
+                hecho_dict = {k: v for k, v in hecho.items()}
+                destino.declare(Estado(**hecho_dict))
+                estados_transferidos += 1
+                print(f"  → Transferido: Estado({hecho_dict})")
+        
+        print(f"Hechos transferidos a {destino.__class__.__name__}: {estados_transferidos} estados")
 
 
 class App(tk.Tk):

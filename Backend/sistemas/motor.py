@@ -24,6 +24,7 @@ class SistemaMotor(SistemaBase):
 
     # Paso 1: Preguntar sobre la batería
     @Rule(Sistema(area='motor'),
+          Estado(clave='no_arranca', valor='si'),
           NOT(Estado(clave='bateria_cargada')))
     def preguntar_estado_bateria(self):
         self.declare(Pregunta(
@@ -68,6 +69,7 @@ class SistemaMotor(SistemaBase):
 
     # Paso 1: Preguntar por el tanque de combustible
     @Rule(Sistema(area='motor'),
+          Estado(clave='se_apaga', valor='si'),
           NOT(Estado(clave='tiene_combustible')))
     def preguntar_tanque_combustible(self):
         self.declare(Pregunta(
@@ -78,8 +80,9 @@ class SistemaMotor(SistemaBase):
 
     # Paso 2: Preguntar por el zumbido de la bomba de combustible
     @Rule(Sistema(area='motor'),
-          Estado(clave='zumbido_motor', valor='si'),
-          NOT(Estado(clave='zumbido_motor')))
+          Estado(clave='tiene_combustible', valor='si'),
+          NOT(Estado(clave='zumbido_motor')),
+          salience=5)
     def preguntar_zumbido_motor(self):
         self.declare(Pregunta(
             clave='zumbido_motor',
@@ -88,7 +91,39 @@ class SistemaMotor(SistemaBase):
         ))
 
     # Paso 3: Preguntar por el acelerador al apagarse
+    @Rule(Sistema(area='motor'),
+          Estado(clave='tiene_combustible', valor='si'),
+          NOT(Estado(clave='acelerador_apagarse')),
+          salience=3)
+    def preguntar_acelerador_apagarse(self):
+        self.declare(Pregunta(
+            clave='acelerador_apagarse',
+            texto='¿El motor reacciona al acelerador antes de apagarse?',
+            opciones= ['si','no']
+        ))
 
-    # Diagnóstico 1: Falla en el sensor del ciguenal 
+    # Diagnóstico 1: Falla en la bomba de combustible
+    @Rule(Sistema(area='motor'),
+          Estado(clave='tiene_combustible', valor='si'),
+          Estado(clave='zumbido_motor', valor='no'),
+          NOT(Estado(clave='acelerador_apagarse')))
+    def diagnostico_bomba_combustible(self):
+        self.diagnosticos_encontrados.append({
+            'causa': "Falla en la bomba de combustible",
+            'solucion': "Reemplaza la bomba de combustible",
+            'severidad': "Moderada"
+        })
+
+    # Diagnóstico 2: Falla en sensor del cigüeñal
+    @Rule(Sistema(area='motor'),
+        Estado(clave='tiene_combustible', valor='si'),
+        Estado(clave='zumbido_motor', valor='si'),
+        Estado(clave='acelerador_apagarse', valor='no'))
+    def diagnostico_sensor_ciguenal(self):
+        self.diagnosticos_encontrados.append({
+            'causa': "Falla en el sensor del cigüeñal",
+            'solucion': "Reemplazar el sensor del cigüeñal",
+            'severidad': "Moderada"
+        })
 
     
