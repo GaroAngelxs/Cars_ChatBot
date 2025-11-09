@@ -31,7 +31,10 @@ class RouterDiagnosticos(SistemaBase):
                 'Aceite_de_transmision_esta_bajo',
                 'frenos_defectuosos',
                 'fallas_electricas',
-                'vibracion_excesiva'
+                'vibracion_excesiva',
+                'Una_llanta_se_ve_baja',
+                'Desgaste_irregular_llantas',
+                'Vibracion_alta_velocidad'
             ]
         ))
 
@@ -85,6 +88,21 @@ class RouterDiagnosticos(SistemaBase):
                     self.declare(Sistema(area='electrico'))
                     self.sistemas_activados.add('electrico')
                     print(f"Sistema activado: Eléctrico")
+                
+                elif sintoma in ['Una_llanta_se_ve_baja']:
+                    self.declare(Sistema(area='llantas_1'))
+                    self.sistemas_activados.add('llantas_1')
+                    print(f"Sistema activado: Llantas (Presión)")
+
+                elif sintoma in ['Desgaste_irregular_llantas']:
+                    self.declare(Sistema(area='llantas_2'))
+                    self.sistemas_activados.add('llantas_2')
+                    print(f"Sistema activado: Llantas (Desgaste)")
+
+                elif sintoma in ['Vibracion_alta_velocidad']:
+                    self.declare(Sistema(area='llantas_3'))
+                    self.sistemas_activados.add('llantas_3')
+                    print(f"Sistema activado: Llantas (Vibración)")
 
     def obtener_sistemas_activados(self):
         """Retorna los sistemas que necesitan diagnóstico"""
