@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from core.router import RouterDiagnosticos
-from sistemas.motor import SistemaMotor
+from sistemas.motor import SistemaMotor1, SistemaMotor2, SistemaMotor3, SistemaMotor4, SistemaMotor5, SistemaMotor6
 from sistemas.transmision import *
 from sistemas.llantas import SistemaLlantas1, SistemaLlantas2, SistemaLlantas3
 from sistemas.enfriamiento import *
@@ -12,7 +12,12 @@ class Coordinador:
         self.vehiculo = vehiculo
         self.router = RouterDiagnosticos()
         self.sistemas_especialistas = {
-            'motor': SistemaMotor(),
+            'motor_1': SistemaMotor1(),
+            'motor_2': SistemaMotor2(),
+            'motor_3': SistemaMotor3(),
+            'motor_4': SistemaMotor4(),
+            'motor_5': SistemaMotor5(),
+            'motor_6': SistemaMotor6(),
             'transmision_1': SistemaTransmision1(),
             'transmision_2': SistemaTransmision2(),
             'transmision_3': SistemaTransmision3(),

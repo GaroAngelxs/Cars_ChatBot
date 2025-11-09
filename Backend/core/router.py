@@ -21,6 +21,11 @@ class RouterDiagnosticos(SistemaBase):
             texto="¿Qué síntomas presenta su vehículo? (puede elegir varios separados por coma)",
             opciones=[
                 'El_motor_no_arranca',
+                'El_auto_se_apaga',
+                'El_auto_emite_humo_negro',
+                'El_auto_emite_humo_azul',
+                'El_auto_emite_humo_blanco',
+                'El_motor_vibra_excesivamente'
                 'El_motor_se_calienta',
                 'Liquido_verde_o_rojo_debajo_del_motor',
                 'El_ventilador_del_auto_no_hace_ruido',
@@ -51,9 +56,34 @@ class RouterDiagnosticos(SistemaBase):
             print(f"Síntomas identificados: {', '.join(sintomas)}")
             
             for sintoma in sintomas:
-                if sintoma in ['El_motor_no_arranca', 'Al_acelerar_pierde_potencia', 'humo_excesivo']:
-                    self.declare(Sistema(area='motor'))
-                    self.sistemas_activados.add('motor')
+                if sintoma == 'El_motor_no_arranca':
+                    self.declare(Sistema(area='motor_1'))
+                    self.sistemas_activados.add('motor_1')
+                    print(f"Sistema activado: Motor")
+                
+                elif sintoma == 'El_auto_se_apaga':
+                    self.declare(Sistema(area='motor_2'))
+                    self.sistemas_activados.add('motor_2')
+                    print(f"Sistema activado: Motor")
+                
+                elif sintoma == 'El_auto_emite_humo_negro':
+                    self.declare(Sistema(area='motor_3'))
+                    self.sistemas_activados.add('motor_3')
+                    print(f"Sistema activado: Motor")
+
+                elif sintoma == 'El_auto_emite_humo_azul':
+                    self.declare(Sistema(area='motor_4'))
+                    self.sistemas_activados.add('motor_4')
+                    print(f"Sistema activado: Motor")
+                
+                elif sintoma == 'El_auto_emite_humo_blanco':
+                    self.declare(Sistema(area='motor_5'))
+                    self.sistemas_activados.add('motor_5')
+                    print(f"Sistema activado: Motor")
+                
+                elif sintoma == 'El_motor_vibra_excesivamente':
+                    self.declare(Sistema(area='motor_6'))
+                    self.sistemas_activados.add('motor_6')
                     print(f"Sistema activado: Motor")
                     
                 elif sintoma in ['El_motor_se_calienta']:
