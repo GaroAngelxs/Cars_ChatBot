@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from core.router import RouterDiagnosticos
 from sistemas.motor import SistemaMotor
-from sistemas.transmision import SistemaTransmision
+from sistemas.transmision import SistemaTransmision1,SistemaTransmision2,SistemaTransmision3,SistemaTransmision4
 from hechos import Vehiculo, Estado, Sistema 
 
 class Coordinador:
@@ -11,7 +11,10 @@ class Coordinador:
         self.router = RouterDiagnosticos()
         self.sistemas_especialistas = {
             'motor': SistemaMotor(),
-            'transmision': SistemaTransmision()
+            'transmision_1': SistemaTransmision1(),
+            'transmision_2': SistemaTransmision2(),
+            'transmision_3': SistemaTransmision3(),
+            'transmision_4': SistemaTransmision4(),
         }
         self.sistemas_activados = []
         self.diagnosticos_finales = []
@@ -271,9 +274,10 @@ class FrameVehiculo(ttk.Frame):
             'modelo': self.modelo_var.get(),
             'anio': self.anio_var.get()
         }
-        if not all(datos.values()):
-            messagebox.showwarning("Datos Incompletos", "Por favor, complete todos los campos.")
-            return
+        #Lo comente para estar haciendo pruebas y no tener que estar poniendo los datos a cada rato jksjsk
+        #if not all(datos.values()):
+            #messagebox.showwarning("Datos Incompletos", "Por favor, complete todos los campos.")
+            #return
         self.controller.iniciar_diagnostico(datos)
         
     def limpiar_campos(self):

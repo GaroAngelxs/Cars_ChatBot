@@ -13,21 +13,22 @@ class RouterDiagnosticos(SistemaBase):
         """Hecho inicial para activar el motor"""
         yield Accion(tipo='iniciar_diagnostico')
 
-    # Pregunta inicial - permite MÚLTIPLES síntomas
     @Rule(Accion(tipo='iniciar_diagnostico'),
           NOT(Sintoma()))
     def preguntar_sintomas_generales(self):
         self.declare(Pregunta(
             clave='sintoma_general',
-            texto="¿Qué síntomas presenta su vehículo?",
+            texto="¿Qué síntomas presenta su vehículo? (puede elegir varios separados por coma)",
             opciones=[
-                'no_arranca',
-                'se_apaga',
-                'se_calia', 
+                'El_motor_no_arranca',
+                'El_motor_se_calienta', 
                 'hace_ruidos_raros', 
-                'pierde_potencia', 
+                'Al_acelerar_pierde_potencia', 
                 'humo_excesivo',
-                'problemas_cambios',
+                'Los_cambios_entran_con_dificultad',
+                'Se_escuchan_ruidos_metalicos_en_cambio',
+                'El_auto_no_avanza_al_acelerar',
+                'Aceite_de_transmision_esta_bajo',
                 'frenos_defectuosos',
                 'fallas_electricas',
                 'vibracion_excesiva'
@@ -39,48 +40,51 @@ class RouterDiagnosticos(SistemaBase):
     def procesar_sintomas_multiples(self, valores):
         """Procesa múltiples síntomas ingresados por el usuario"""
         if isinstance(valores, str):
-            # Convertir string a lista de síntomas
             sintomas = [s.strip() for s in valores.split(',')]
             self.sintomas_ingresados.update(sintomas)
             
-            print(f"🔍 Síntomas identificados: {', '.join(sintomas)}")
+            print(f"Síntomas identificados: {', '.join(sintomas)}")
             
-            # Activar sistemas correspondientes a CADA síntoma
             for sintoma in sintomas:
-                if sintoma == 'no_arranca':
+                if sintoma in ['El_motor_no_arranca', 'Al_acelerar_pierde_potencia', 'humo_excesivo']:
                     self.declare(Sistema(area='motor'))
-                    self.declare(Estado(clave='no_arranca', valor='si'))
                     self.sistemas_activados.add('motor')
-                    print(f"   ✅ Sistema activado: Motor")
-
-                elif sintoma == 'se_apaga':
-                    self.declare(Sistema(area='motor'))
-                    self.declare(Estado(clave='se_apaga', valor='si'))
-                    self.sistemas_activados.add('motor')
-                    print(f"   ✅ Sistema activado: Motor")
+                    print(f"Sistema activado: Motor")
                     
-                elif sintoma in ['se_calia']:
+                elif sintoma in ['El_motor_se_calienta']:
                     self.declare(Sistema(area='enfriamiento'))
                     self.sistemas_activados.add('enfriamiento')
-                    print(f"   ✅ Sistema activado: Enfriamiento")
+                    print(f"Sistema activado: Enfriamiento")
                     
-                elif sintoma in ['problemas_cambios', 'vibracion_excesiva']:
-                    self.declare(Sistema(area='transmision'))
-                    self.sistemas_activados.add('transmision')
-                    print(f"   ✅ Sistema activado: Transmisión")
+                elif sintoma in ['Los_cambios_entran_con_dificultad', 'vibracion_excesiva']:
+                    self.declare(Sistema(area='transmision_1'))
+                    self.sistemas_activados.add('transmision_1')
+                    print(f"Sistema activado: Transmisión")
+
+                elif sintoma in ['Se_escuchan_ruidos_metalicos_en_cambio']:
+                    self.declare(Sistema(area='transmision_2'))
+                    self.sistemas_activados.add('transmision_2')
+                    print(f"Sistema activado: Transmisión")
+                
+                elif sintoma in ['El_auto_no_avanza_al_acelerar']:
+                    self.declare(Sistema(area='transmision_3'))
+                    self.sistemas_activados.add('transmision_3')
+                    print(f"Sistema activado: Transmisión")
+
+                elif sintoma in ['Aceite_de_transmision_esta_bajo']:
+                    self.declare(Sistema(area='transmision_4'))
+                    self.sistemas_activados.add('transmision_4')
+                    print(f"Sistema activado: Transmisión")
                     
                 elif sintoma in ['frenos_defectuosos']:
                     self.declare(Sistema(area='frenos'))
                     self.sistemas_activados.add('frenos')
-                    print(f"   ✅ Sistema activado: Frenos")
+                    print(f"Sistema activado: Frenos")
                     
                 elif sintoma in ['fallas_electricas', 'hace_ruidos_raros']:
                     self.declare(Sistema(area='electrico'))
                     self.sistemas_activados.add('electrico')
-                    print(f"   ✅ Sistema activado: Eléctrico")
-
-    # ⚠️ ELIMINADAS todas las reglas de preguntas específicas
-    # El router SOLO activa sistemas, NO hace preguntas técnicas
+                    print(f"Sistema activado: Eléctrico")
 
     def obtener_sistemas_activados(self):
         """Retorna los sistemas que necesitan diagnóstico"""
