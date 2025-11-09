@@ -2,8 +2,9 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from core.router import RouterDiagnosticos
 from sistemas.motor import SistemaMotor
-from sistemas.transmision import SistemaTransmision1,SistemaTransmision2,SistemaTransmision3,SistemaTransmision4
+from sistemas.transmision import *
 from sistemas.llantas import SistemaLlantas1, SistemaLlantas2, SistemaLlantas3
+from sistemas.enfriamiento import *
 from hechos import Vehiculo, Estado, Sistema 
 
 class Coordinador:
@@ -19,6 +20,9 @@ class Coordinador:
             'llantas_1': SistemaLlantas1(),
             'llantas_2': SistemaLlantas2(),
             'llantas_3': SistemaLlantas3(),
+            'enfriamiento_1': SistemaEnfriamiento1(),
+            'enfriamiento_2': SistemaEnfriamiento2(),
+            'enfriamiento_3': SistemaEnfriamiento3(),
         }
         self.sistemas_activados = []
         self.diagnosticos_finales = []

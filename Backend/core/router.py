@@ -21,7 +21,9 @@ class RouterDiagnosticos(SistemaBase):
             texto="¿Qué síntomas presenta su vehículo? (puede elegir varios separados por coma)",
             opciones=[
                 'El_motor_no_arranca',
-                'El_motor_se_calienta', 
+                'El_motor_se_calienta',
+                'Liquido_verde_o_rojo_debajo_del_motor',
+                'El_ventilador_del_auto_no_hace_ruido',
                 'hace_ruidos_raros', 
                 'Al_acelerar_pierde_potencia', 
                 'humo_excesivo',
@@ -55,8 +57,18 @@ class RouterDiagnosticos(SistemaBase):
                     print(f"Sistema activado: Motor")
                     
                 elif sintoma in ['El_motor_se_calienta']:
-                    self.declare(Sistema(area='enfriamiento'))
-                    self.sistemas_activados.add('enfriamiento')
+                    self.declare(Sistema(area='enfriamiento_1'))
+                    self.sistemas_activados.add('enfriamiento_1')
+                    print(f"Sistema activado: Enfriamiento")
+
+                elif sintoma in ['Liquido_verde_o_rojo_debajo_del_motor']:
+                    self.declare(Sistema(area='enfriamiento_2'))
+                    self.sistemas_activados.add('enfriamiento_2')
+                    print(f"Sistema activado: Enfriamiento")
+ 
+                elif sintoma in ['El_ventilador_del_auto_no_hace_ruido']:
+                    self.declare(Sistema(area='enfriamiento_3'))
+                    self.sistemas_activados.add('enfriamiento_3')
                     print(f"Sistema activado: Enfriamiento")
                     
                 elif sintoma in ['Los_cambios_entran_con_dificultad', 'vibracion_excesiva']:
