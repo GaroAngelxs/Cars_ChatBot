@@ -6,6 +6,9 @@ from sistemas.transmision import *
 from sistemas.llantas import *
 from sistemas.enfriamiento import *
 from sistemas.electrico import *
+from sistemas.frenos import *
+from sistemas.combustible import *
+
 
 from hechos import Vehiculo, Estado, Sistema 
 
@@ -33,7 +36,15 @@ class Coordinador:
             'electrico_1': SistemaElectrico1(),
             'electrico_2': SistemaElectrico2(),
             'electrico_3': SistemaElectrico3(),
-            'electrico_4': SistemaElectrico4()
+            'electrico_4': SistemaElectrico4(),
+            'frenos_1': SistemaFrenos1(),
+            'frenos_2': SistemaFrenos2(),
+            'frenos_3': SistemaFrenos3(),
+            'frenos_4': SistemaFrenos4(),
+            'combustible_1': SistemaCombustible1(),
+            'combustible_2': SistemaCombustible2(),
+            'combustible_3': SistemaCombustible3(),
+            'combustible_4': SistemaCombustible4()
         }
         self.sistemas_activados = []
         self.diagnosticos_finales = []

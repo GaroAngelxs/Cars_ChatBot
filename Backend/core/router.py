@@ -28,7 +28,15 @@ class RouterDiagnosticos(SistemaBase):
             'El_auto_no_enciende': 'El auto no enciende',
             'Las_luces_del_tablero_parpadean': 'Las luces del tablero parpadean',
             'Luces_de_faros_tenues': 'Las luces de los faros son tenues',
-            'Claxon_o_limpiaparabrisas_disfuncionales': 'El claxon o limpiaparabrisas son disfuncionales'
+            'Claxon_o_limpiaparabrisas_disfuncionales': 'El claxon o limpiaparabrisas son disfuncionales',
+            'Pedal_de_freno_esponjoso': 'El pedal del freno se siente esponjoso',
+            'Chirrido_al_frenar': 'Se escucha un chirrido al frenar',
+            'Desvio_al_frenar': 'El vehículo se desvía al frenar',
+            'Vibracion_al_frenar': 'Vibración al frenar',
+            'Arranque_tardio': 'El motor tarda en arrancar',
+            'Consumo_combustible_alto': 'El consumo de combustible es alto',
+            'Olor_a_gasolina': 'Se percibe olor a gasolina',
+            'Perdida_potencia_en_pendientes': 'El motor pierde potencia en pendientes'
         }
 
     @DefFacts()
@@ -163,6 +171,35 @@ class RouterDiagnosticos(SistemaBase):
         elif sintoma == 'Claxon_o_limpiaparabrisas_disfuncionales':
             self.declare(Sistema(area='electrico_4'))
             self.sistemas_activados.add('electrico_4')
+        
+        elif sintoma == 'Pedal_de_freno_esponjoso':
+            self.declare(Sistema(area='frenos_1'))
+            self.sistemas_activados.add('frenos_1')
+
+        elif sintoma == 'Chirrido_al_frenar':
+            self.declare(Sistema(area='frenos_2'))
+            self.sistemas_activados.add('frenos_2')
+
+        elif sintoma == 'Desvio_al_frenar':
+            self.declare(Sistema(area='frenos_3'))
+            self.sistemas_activados.add('frenos_3')
+
+        elif sintoma == 'Vibracion_al_frenar':
+            self.declare(Sistema(area='frenos_4'))
+            self.sistemas_activados.add('frenos_4')
+        elif sintoma == 'Arranque_tardio':
+            self.declare(Sistema(area='combustible_1'))
+            self.sistemas_activados.add('combustible_1')
+        elif sintoma == 'Consumo_combustible_alto':
+            self.declare(Sistema(area='combustible_2'))
+            self.sistemas_activados.add('combustible_2')
+        elif sintoma == 'Olor_a_gasolina':
+            self.declare(Sistema(area='combustible_3'))
+            self.sistemas_activados.add('combustible_3')
+        elif sintoma == 'Perdida_potencia_en_pendientes':
+            self.declare(Sistema(area='combustible_4'))
+            self.sistemas_activados.add('combustible_4')
+
 
     def obtener_sistemas_activados(self):
         """Retorna los sistemas que necesitan diagnóstico"""
