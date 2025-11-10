@@ -10,6 +10,7 @@ from sistemas.frenos import *
 from sistemas.combustible import *
 from sistemas.escape import *
 from sistemas.fluidos import *
+from sistemas.aire_acondicionado import *
 from hechos import Vehiculo, Estado, Sistema 
 
 class Coordinador:
@@ -51,7 +52,11 @@ class Coordinador:
             'fluidos_1': SistemaFluidos1(),
             'fluidos_2': SistemaFluidos2(),
             'fluidos_3': SistemaFluidos3(),
-            'fluidos_4': SistemaFluidos4()
+            'fluidos_4': SistemaFluidos4(),
+            'acondicionado_1': SistemaAcondicionado1(),
+            'acondicionado_2': SistemaAcondicionado2(),
+            'acondicionado_3': SistemaAcondicionado3(),
+            'acondicionado_4': SistemaAcondicionado4()
         }
 
         self.sistemas_activados = []
