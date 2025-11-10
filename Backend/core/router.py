@@ -36,7 +36,10 @@ class RouterDiagnosticos(SistemaBase):
             'Arranque_tardio': 'El motor tarda en arrancar',
             'Consumo_combustible_alto': 'El consumo de combustible es alto',
             'Olor_a_gasolina': 'Se percibe olor a gasolina',
-            'Perdida_potencia_en_pendientes': 'El motor pierde potencia en pendientes'
+            'Perdida_potencia_en_pendientes': 'El motor pierde potencia en pendientes',
+            'Ruido_fuerte_escape': 'Se escucha un ruido fuerte en el escape',
+            'Olor_a_gases': 'Se percibe olor a gases dentro del vehículo',
+            'Humo_escape_oscuro': 'El humo del escape es muy oscuro'
         }
 
     @DefFacts()
@@ -187,18 +190,34 @@ class RouterDiagnosticos(SistemaBase):
         elif sintoma == 'Vibracion_al_frenar':
             self.declare(Sistema(area='frenos_4'))
             self.sistemas_activados.add('frenos_4')
+
         elif sintoma == 'Arranque_tardio':
             self.declare(Sistema(area='combustible_1'))
             self.sistemas_activados.add('combustible_1')
+
         elif sintoma == 'Consumo_combustible_alto':
             self.declare(Sistema(area='combustible_2'))
             self.sistemas_activados.add('combustible_2')
+
         elif sintoma == 'Olor_a_gasolina':
             self.declare(Sistema(area='combustible_3'))
             self.sistemas_activados.add('combustible_3')
+
         elif sintoma == 'Perdida_potencia_en_pendientes':
             self.declare(Sistema(area='combustible_4'))
             self.sistemas_activados.add('combustible_4')
+
+        elif sintoma == 'Ruido_fuerte_escape':
+            self.declare(Sistema(area='escape_1'))
+            self.sistemas_activados.add('escape_1')
+        
+        elif sintoma == 'Olor_a_gases':
+            self.declare(Sistema(area='escape_2'))
+            self.sistemas_activados.add('escape_2')
+
+        elif sintoma == 'Humo_escape_oscuro':
+            self.declare(Sistema(area='escape_3'))
+            self.sistemas_activados.add('escape_3')
 
 
     def obtener_sistemas_activados(self):

@@ -8,8 +8,7 @@ from sistemas.enfriamiento import *
 from sistemas.electrico import *
 from sistemas.frenos import *
 from sistemas.combustible import *
-
-
+from sistemas.escape import *
 from hechos import Vehiculo, Estado, Sistema 
 
 class Coordinador:
@@ -44,8 +43,12 @@ class Coordinador:
             'combustible_1': SistemaCombustible1(),
             'combustible_2': SistemaCombustible2(),
             'combustible_3': SistemaCombustible3(),
-            'combustible_4': SistemaCombustible4()
+            'combustible_4': SistemaCombustible4(),
+            'escape_1': SistemaEscape1(),
+            'escape_2': SistemaEscape2(),
+            'escape_3': SistemaEscape3()
         }
+
         self.sistemas_activados = []
         self.diagnosticos_finales = []
         
