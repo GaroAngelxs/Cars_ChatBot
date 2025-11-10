@@ -39,7 +39,11 @@ class RouterDiagnosticos(SistemaBase):
             'Perdida_potencia_en_pendientes': 'El motor pierde potencia en pendientes',
             'Ruido_fuerte_escape': 'Se escucha un ruido fuerte en el escape',
             'Olor_a_gases': 'Se percibe olor a gases dentro del vehículo',
-            'Humo_escape_oscuro': 'El humo del escape es muy oscuro'
+            'Humo_escape_oscuro': 'El humo del escape es muy oscuro',
+            'Nivel_aceite_bajo': 'El nivel de aceite es bajo',
+            'Liquido_de_frenos_bajo': 'El nivel del líquido de frenos es bajo',
+            'Refrigerante_marron': 'El color del refrigerante es marrón',
+            'Liquido_direccion_oscuro': 'El líquido de la dirección es oscuro'
         }
 
     @DefFacts()
@@ -218,6 +222,22 @@ class RouterDiagnosticos(SistemaBase):
         elif sintoma == 'Humo_escape_oscuro':
             self.declare(Sistema(area='escape_3'))
             self.sistemas_activados.add('escape_3')
+
+        elif sintoma == 'Nivel_aceite_bajo':
+            self.declare(Sistema(area='fluidos_1'))
+            self.sistemas_activados.add('fluidos_1')
+
+        elif sintoma == 'Liquido_de_frenos_bajo':
+            self.declare(Sistema(area='fluidos_2'))
+            self.sistemas_activados.add('fluidos_2')
+
+        elif sintoma == 'Refrigerante_marron':
+            self.declare(Sistema(area='fluidos_3'))
+            self.sistemas_activados.add('fluidos_3')
+
+        elif sintoma == 'Liquido_direccion_oscuro':
+            self.declare(Sistema(area='fluidos_4'))
+            self.sistemas_activados.add('fluidos_4')
 
 
     def obtener_sistemas_activados(self):
