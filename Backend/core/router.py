@@ -25,7 +25,8 @@ class RouterDiagnosticos(SistemaBase):
                 'El_auto_emite_humo_negro',
                 'El_auto_emite_humo_azul',
                 'El_auto_emite_humo_blanco',
-                'El_motor_vibra_excesivamente'
+                'El_motor_vibra_excesivamente',
+
                 'El_motor_se_calienta',
                 'Liquido_verde_o_rojo_debajo_del_motor',
                 'El_ventilador_del_auto_no_hace_ruido',
@@ -41,7 +42,11 @@ class RouterDiagnosticos(SistemaBase):
                 'vibracion_excesiva',
                 'Una_llanta_se_ve_baja',
                 'Desgaste_irregular_llantas',
-                'Vibracion_alta_velocidad'
+                'Vibracion_alta_velocidad',
+                'El_auto_no_enciende',
+                'Las_luces_del_tablero_parpadean',
+                'luces_de_faros_tenues',
+                'claxon_o_limpiaparabrisas_disfuncionales'
             ]
         ))
 
@@ -145,6 +150,26 @@ class RouterDiagnosticos(SistemaBase):
                     self.declare(Sistema(area='llantas_3'))
                     self.sistemas_activados.add('llantas_3')
                     print(f"Sistema activado: Llantas (Vibración)")
+
+                elif sintoma == 'El_auto_no_enciende':
+                    self.declare(Sistema(area='electrico_1'))
+                    self.sistemas_activados.add('electrico_1')
+                    print(f"Sistema activado: Electrico")
+                
+                elif sintoma == 'Las_luces_del_tablero_parpadean':
+                    self.declare(Sistema(area='electrico_2'))
+                    self.sistemas_activados.add('electrico_2')
+                    print(f"Sistema activado: Electrico")
+                
+                elif sintoma == 'luces_de_faros_tenues':
+                    self.declare(Sistema(area='electrico_3'))
+                    self.sistemas_activados.add('electrico_3')
+                    print(f"Sistema activado: Electrico")
+                
+                elif sintoma == 'claxon_o_limpiaparabrisas_disfuncionales':
+                    self.declare(Sistema(area='electrico_4'))
+                    self.sistemas_activados.add('electrico_4')
+                    print(f"Sistema activado: Electrico")
 
     def obtener_sistemas_activados(self):
         """Retorna los sistemas que necesitan diagnóstico"""

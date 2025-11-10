@@ -2,14 +2,6 @@ from experta import *
 from core.base import SistemaBase
 from hechos import *
 
-### Lista de síntomas principales del motor:
-# el motor no arranca
-# el motor se apaga
-# el motor emite humo negro
-# el motor emite humo azul
-# el motor emite humo blanco
-# el motor vibra excesivamente
-
 ### Para el síntoma "no_arranca"
 class SistemaMotor1(SistemaBase):
     def __init__(self):
@@ -318,7 +310,7 @@ class SistemaMotor5(SistemaBase):
     # Activación del diagnóstico de motor
     @Rule(Sistema(area='motor_5'))
     def iniciar_diagnostico_motor(self):
-        print("Iniciando diagnóstico: Sistema Motor 4")
+        print("Iniciando diagnóstico: Sistema Motor 5")
 
     # Paso 1: Preguntar por el nivel de refrigerante
     @Rule(Sistema(area='motor_5'),
@@ -358,7 +350,7 @@ class SistemaMotor6(SistemaBase):
     # Activación del diagnóstico de motor
     @Rule(Sistema(area='motor_6'))
     def iniciar_diagnostico_motor(self):
-        print("Iniciando diagnóstico: Sistema Motor 4")
+        print("Iniciando diagnóstico: Sistema Motor 6")
 
     # Paso 1: Preguntar por la desaparición de la falla a altas revoluciones
     @Rule(Sistema(area='motor_6'),
