@@ -8,6 +8,29 @@ class RouterDiagnosticos(SistemaBase):
         self.sistemas_activados = set()
         self.sintomas_ingresados = set()
 
+        self.mapeo_sintomas = {
+            'El_motor_no_arranca': 'El motor del auto no arranca',
+            'El_auto_se_apaga': 'El auto se apaga repentinamente',
+            'El_auto_emite_humo_negro': 'El auto emite humo negro',
+            'El_auto_emite_humo_azul': 'El auto emite humo azul',
+            'El_auto_emite_humo_blanco': 'El auto emite humo blanco',
+            'El_motor_vibra_excesivamente': 'El motor vibra excesivamente',
+            'El_motor_se_calienta': 'El motor se calienta mucho',
+            'Liquido_verde_o_rojo_debajo_del_motor': 'Hay líquido verde o rojo debajo del motor',
+            'El_ventilador_del_auto_no_hace_ruido': 'El ventilador no hace ruido',
+            'Los_cambios_entran_con_dificultad': 'Los cambios entran con mucha dificultad',
+            'Se_escuchan_ruidos_metalicos_en_cambio': 'Se escuchan ruidos metálicos al cambiar de marcha',
+            'El_auto_no_avanza_al_acelerar': 'El auto no avanza al acelerar',
+            'Aceite_de_transmision_esta_bajo': 'El aceite de la transmisión está bajo',
+            'Una_llanta_se_ve_baja': 'Una llanta del auto está baja',
+            'Desgaste_irregular_llantas': 'Hay desgaste irregular en las llantas',
+            'Vibracion_alta_velocidad': 'El auto produce vibración a alta velocidad',
+            'El_auto_no_enciende': 'El auto no enciende',
+            'Las_luces_del_tablero_parpadean': 'Las luces del tablero parpadean',
+            'Luces_de_faros_tenues': 'Las luces de los faros son tenues',
+            'Claxon_o_limpiaparabrisas_disfuncionales': 'El claxon o limpiaparabrisas son disfuncionales'
+        }
+
     @DefFacts()
     def _initial_action(self):
         """Hecho inicial para activar el motor"""
@@ -16,38 +39,13 @@ class RouterDiagnosticos(SistemaBase):
     @Rule(Accion(tipo='iniciar_diagnostico'),
           NOT(Sintoma()))
     def preguntar_sintomas_generales(self):
+
+        opciones_naturales = list(self.mapeo_sintomas.values())
+
         self.declare(Pregunta(
             clave='sintoma_general',
-            texto="¿Qué síntomas presenta su vehículo? (puede elegir varios separados por coma)",
-            opciones=[
-                'El_motor_no_arranca',
-                'El_auto_se_apaga',
-                'El_auto_emite_humo_negro',
-                'El_auto_emite_humo_azul',
-                'El_auto_emite_humo_blanco',
-                'El_motor_vibra_excesivamente',
-
-                'El_motor_se_calienta',
-                'Liquido_verde_o_rojo_debajo_del_motor',
-                'El_ventilador_del_auto_no_hace_ruido',
-                'hace_ruidos_raros', 
-                'Al_acelerar_pierde_potencia', 
-                'humo_excesivo',
-                'Los_cambios_entran_con_dificultad',
-                'Se_escuchan_ruidos_metalicos_en_cambio',
-                'El_auto_no_avanza_al_acelerar',
-                'Aceite_de_transmision_esta_bajo',
-                'frenos_defectuosos',
-                'fallas_electricas',
-                'vibracion_excesiva',
-                'Una_llanta_se_ve_baja',
-                'Desgaste_irregular_llantas',
-                'Vibracion_alta_velocidad',
-                'El_auto_no_enciende',
-                'Las_luces_del_tablero_parpadean',
-                'luces_de_faros_tenues',
-                'claxon_o_limpiaparabrisas_disfuncionales'
-            ]
+            texto="¿Qué síntomas presenta su vehículo?",
+            opciones=opciones_naturales
         ))
 
     # Procesar MÚLTIPLES síntomas
@@ -55,121 +53,116 @@ class RouterDiagnosticos(SistemaBase):
     def procesar_sintomas_multiples(self, valores):
         """Procesa múltiples síntomas ingresados por el usuario"""
         if isinstance(valores, str):
-            sintomas = [s.strip() for s in valores.split(',')]
-            self.sintomas_ingresados.update(sintomas)
-            
-            print(f"Síntomas identificados: {', '.join(sintomas)}")
-            
-            for sintoma in sintomas:
-                if sintoma == 'El_motor_no_arranca':
-                    self.declare(Sistema(area='motor_1'))
-                    self.sistemas_activados.add('motor_1')
-                    print(f"Sistema activado: Motor")
-                
-                elif sintoma == 'El_auto_se_apaga':
-                    self.declare(Sistema(area='motor_2'))
-                    self.sistemas_activados.add('motor_2')
-                    print(f"Sistema activado: Motor")
-                
-                elif sintoma == 'El_auto_emite_humo_negro':
-                    self.declare(Sistema(area='motor_3'))
-                    self.sistemas_activados.add('motor_3')
-                    print(f"Sistema activado: Motor")
 
-                elif sintoma == 'El_auto_emite_humo_azul':
-                    self.declare(Sistema(area='motor_4'))
-                    self.sistemas_activados.add('motor_4')
-                    print(f"Sistema activado: Motor")
-                
-                elif sintoma == 'El_auto_emite_humo_blanco':
-                    self.declare(Sistema(area='motor_5'))
-                    self.sistemas_activados.add('motor_5')
-                    print(f"Sistema activado: Motor")
-                
-                elif sintoma == 'El_motor_vibra_excesivamente':
-                    self.declare(Sistema(area='motor_6'))
-                    self.sistemas_activados.add('motor_6')
-                    print(f"Sistema activado: Motor")
+            sintomas_naturales = [s.strip() for s in valores.split(',')]
+
+            mapeo_inverso = {v: k for k, v in self.mapeo_sintomas.items()}
+
+            sintomas_codigos = []
+
+            for sintoma_natural in sintomas_naturales:
+                if sintoma_natural in mapeo_inverso:
+                    codigo = mapeo_inverso[sintoma_natural]
+                    sintomas_codigos.append(codigo)
+                else:
+                    codigo_encontrado = None
+                    for texto_natural, codigo in mapeo_inverso.items():
+                        if sintoma_natural.lower() in texto_natural.lower():
+                            codigo_encontrado = codigo
+                            break
                     
-                elif sintoma in ['El_motor_se_calienta']:
-                    self.declare(Sistema(area='enfriamiento_1'))
-                    self.sistemas_activados.add('enfriamiento_1')
-                    print(f"Sistema activado: Enfriamiento")
+                    if codigo_encontrado:
+                        sintomas_codigos.append(codigo_encontrado)
+                    else:
+                        print(f"Síntoma no reconocido: {sintoma_natural}")
+            
+            self.sintomas_ingresados.update(sintomas_codigos)
 
-                elif sintoma in ['Liquido_verde_o_rojo_debajo_del_motor']:
-                    self.declare(Sistema(area='enfriamiento_2'))
-                    self.sistemas_activados.add('enfriamiento_2')
-                    print(f"Sistema activado: Enfriamiento")
+            for codigo in sintomas_codigos:
+                self.procesar_sintoma_individual(codigo)
+
+    def procesar_sintoma_individual(self, sintoma):
+        """Procesa un síntoma individual por su código"""
+
+        if sintoma == 'El_motor_no_arranca':
+            self.declare(Sistema(area='motor_1'))
+            self.sistemas_activados.add('motor_1')
+                
+        elif sintoma == 'El_auto_se_apaga':
+            self.declare(Sistema(area='motor_2'))
+            self.sistemas_activados.add('motor_2')
+                
+        elif sintoma == 'El_auto_emite_humo_negro':
+            self.declare(Sistema(area='motor_3'))
+            self.sistemas_activados.add('motor_3')
+
+        elif sintoma == 'El_auto_emite_humo_azul':
+            self.declare(Sistema(area='motor_4'))
+            self.sistemas_activados.add('motor_4')
+                
+        elif sintoma == 'El_auto_emite_humo_blanco':
+            self.declare(Sistema(area='motor_5'))
+            self.sistemas_activados.add('motor_5')
+                
+        elif sintoma == 'El_motor_vibra_excesivamente':
+            self.declare(Sistema(area='motor_6'))
+            self.sistemas_activados.add('motor_6')
+                    
+        elif sintoma == 'El_motor_se_calienta':
+            self.declare(Sistema(area='enfriamiento_1'))
+            self.sistemas_activados.add('enfriamiento_1')
+
+        elif sintoma == 'Liquido_verde_o_rojo_debajo_del_motor':
+            self.declare(Sistema(area='enfriamiento_2'))
+            self.sistemas_activados.add('enfriamiento_2')
  
-                elif sintoma in ['El_ventilador_del_auto_no_hace_ruido']:
-                    self.declare(Sistema(area='enfriamiento_3'))
-                    self.sistemas_activados.add('enfriamiento_3')
-                    print(f"Sistema activado: Enfriamiento")
+        elif sintoma == 'El_ventilador_del_auto_no_hace_ruido':
+            self.declare(Sistema(area='enfriamiento_3'))
+            self.sistemas_activados.add('enfriamiento_3')
                     
-                elif sintoma in ['Los_cambios_entran_con_dificultad', 'vibracion_excesiva']:
-                    self.declare(Sistema(area='transmision_1'))
-                    self.sistemas_activados.add('transmision_1')
-                    print(f"Sistema activado: Transmisión")
+        elif sintoma == 'Los_cambios_entran_con_dificultad':
+            self.declare(Sistema(area='transmision_1'))
+            self.sistemas_activados.add('transmision_1')
 
-                elif sintoma in ['Se_escuchan_ruidos_metalicos_en_cambio']:
-                    self.declare(Sistema(area='transmision_2'))
-                    self.sistemas_activados.add('transmision_2')
-                    print(f"Sistema activado: Transmisión")
+        elif sintoma == 'Se_escuchan_ruidos_metalicos_en_cambio':
+            self.declare(Sistema(area='transmision_2'))
+            self.sistemas_activados.add('transmision_2')
                 
-                elif sintoma in ['El_auto_no_avanza_al_acelerar']:
-                    self.declare(Sistema(area='transmision_3'))
-                    self.sistemas_activados.add('transmision_3')
-                    print(f"Sistema activado: Transmisión")
+        elif sintoma == 'El_auto_no_avanza_al_acelerar':
+            self.declare(Sistema(area='transmision_3'))
+            self.sistemas_activados.add('transmision_3')
 
-                elif sintoma in ['Aceite_de_transmision_esta_bajo']:
-                    self.declare(Sistema(area='transmision_4'))
-                    self.sistemas_activados.add('transmision_4')
-                    print(f"Sistema activado: Transmisión")
-                    
-                elif sintoma in ['frenos_defectuosos']:
-                    self.declare(Sistema(area='frenos'))
-                    self.sistemas_activados.add('frenos')
-                    print(f"Sistema activado: Frenos")
-                    
-                elif sintoma in ['fallas_electricas', 'hace_ruidos_raros']:
-                    self.declare(Sistema(area='electrico'))
-                    self.sistemas_activados.add('electrico')
-                    print(f"Sistema activado: Eléctrico")
+        elif sintoma == 'Aceite_de_transmision_esta_bajo':
+            self.declare(Sistema(area='transmision_4'))
+            self.sistemas_activados.add('transmision_4')
                 
-                elif sintoma in ['Una_llanta_se_ve_baja']:
-                    self.declare(Sistema(area='llantas_1'))
-                    self.sistemas_activados.add('llantas_1')
-                    print(f"Sistema activado: Llantas (Presión)")
+        elif sintoma in ['Una_llanta_se_ve_baja']:
+            self.declare(Sistema(area='llantas_1'))
+            self.sistemas_activados.add('llantas_1')
 
-                elif sintoma in ['Desgaste_irregular_llantas']:
-                    self.declare(Sistema(area='llantas_2'))
-                    self.sistemas_activados.add('llantas_2')
-                    print(f"Sistema activado: Llantas (Desgaste)")
+        elif sintoma == 'Desgaste_irregular_llantas':
+            self.declare(Sistema(area='llantas_2'))
+            self.sistemas_activados.add('llantas_2')
 
-                elif sintoma in ['Vibracion_alta_velocidad']:
-                    self.declare(Sistema(area='llantas_3'))
-                    self.sistemas_activados.add('llantas_3')
-                    print(f"Sistema activado: Llantas (Vibración)")
+        elif sintoma == 'Vibracion_alta_velocidad':
+            self.declare(Sistema(area='llantas_3'))
+            self.sistemas_activados.add('llantas_3')
 
-                elif sintoma == 'El_auto_no_enciende':
-                    self.declare(Sistema(area='electrico_1'))
-                    self.sistemas_activados.add('electrico_1')
-                    print(f"Sistema activado: Electrico")
+        elif sintoma == 'El_auto_no_enciende':
+            self.declare(Sistema(area='electrico_1'))
+            self.sistemas_activados.add('electrico_1')
                 
-                elif sintoma == 'Las_luces_del_tablero_parpadean':
-                    self.declare(Sistema(area='electrico_2'))
-                    self.sistemas_activados.add('electrico_2')
-                    print(f"Sistema activado: Electrico")
+        elif sintoma == 'Las_luces_del_tablero_parpadean':
+            self.declare(Sistema(area='electrico_2'))
+            self.sistemas_activados.add('electrico_2')
                 
-                elif sintoma == 'luces_de_faros_tenues':
-                    self.declare(Sistema(area='electrico_3'))
-                    self.sistemas_activados.add('electrico_3')
-                    print(f"Sistema activado: Electrico")
+        elif sintoma == 'Luces_de_faros_tenues':
+            self.declare(Sistema(area='electrico_3'))
+            self.sistemas_activados.add('electrico_3')
                 
-                elif sintoma == 'claxon_o_limpiaparabrisas_disfuncionales':
-                    self.declare(Sistema(area='electrico_4'))
-                    self.sistemas_activados.add('electrico_4')
-                    print(f"Sistema activado: Electrico")
+        elif sintoma == 'Claxon_o_limpiaparabrisas_disfuncionales':
+            self.declare(Sistema(area='electrico_4'))
+            self.sistemas_activados.add('electrico_4')
 
     def obtener_sistemas_activados(self):
         """Retorna los sistemas que necesitan diagnóstico"""
@@ -177,6 +170,14 @@ class RouterDiagnosticos(SistemaBase):
     
     def obtener_sintomas_ingresados(self):
         """Retorna los síntomas ingresados por el usuario"""
+        sintomas_naturales = []
+        for codigo in self.sintomas_ingresados:
+            if codigo in self.mapeo_sintomas:
+                sintomas_naturales.append(self.mapeo_sintomas[codigo])
+        return sintomas_naturales
+
+    def obtener_sintomas_codigos(self):
+        """Retorna los síntomas en formato código (para uso interno)"""
         return self.sintomas_ingresados.copy()
     
     def limpiar_hechos_temporales(self):
