@@ -103,7 +103,7 @@ class SistemaLlantas3(SistemaBase):
         })
 
     @Rule(Sistema(area='llantas_3'),
-          Estado(clave='lugar_vVibracion', valor='asiento_piso'))
+          Estado(clave='lugar_Vibracion', valor='asiento_piso'))
     def diagnostico_desbalanceo_trasero(self):
         self.diagnosticos_encontrados.append({
             'causa': "Vibración en el asiento o piso a alta velocidad.",
