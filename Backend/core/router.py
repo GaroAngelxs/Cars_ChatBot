@@ -52,7 +52,9 @@ class RouterDiagnosticos(SistemaBase):
             'Luz_Aceite_Encendida': 'Testigo de aceite encendido',
             'Luz_Bateria_Encendida':'Testigo de bateria encendido',
             'Luz_Frenos_Encendida': 'Testigo de frenos encendido',
-            'Luz_Temperatura_Encendida': 'Testigo de temperatura encendido'
+            'Luz_Temperatura_Encendida': 'Testigo de temperatura encendido',
+            'Volante_vibra': 'Mi volante vibra',
+            'Volante_duro': 'Tengo que aplicar mucha fuerza para girar el volante'
         }
 
     @DefFacts()
@@ -283,6 +285,14 @@ class RouterDiagnosticos(SistemaBase):
         elif sintoma == 'Luz_Temperatura_Encendida':
             self.declare(Sintoma(area='sensores_5'))
             self.sistemas_activados.add('sensores_5')
+
+        elif sintoma == 'Volante_vibra':
+            self.declare(Sintoma(area='suspension_1'))
+            self.sistemas_activados.add('suspension_1')
+
+        elif sintoma == 'Volante_duro':
+            self.declare(Sintoma(area='direccion_1'))
+            self.sistemas_activados.add('direccion_1')
             
 
 

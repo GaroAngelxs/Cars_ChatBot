@@ -12,6 +12,8 @@ from sistemas.escape import *
 from sistemas.fluidos import *
 from sistemas.aire_acondicionado import *
 from sistemas.sensores_tablero import *
+from sistemas.suspension import *
+from sistemas.direccion import *
 from hechos import Vehiculo, Estado, Sistema 
 
 class Coordinador:
@@ -63,6 +65,8 @@ class Coordinador:
             'sensores_3': SistemaSensores3(),
             'sensores_4': SistemaSensores4(),
             'sensores_5': SistemaSensores5(),
+            'suspension_1': SistemaSuspension1(),
+            'direccion_1': SistemaDireccion1(),
         }
 
         self.sistemas_activados = []
