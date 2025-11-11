@@ -20,6 +20,8 @@ class Coordinador:
     def __init__(self, vehiculo):
         self.vehiculo = vehiculo
         self.router = RouterDiagnosticos()
+        
+        # Se generan todos los sistemas con sus clases
         self.sistemas_especialistas = {
             'motor_1': SistemaMotor1(),
             'motor_2': SistemaMotor2(),
@@ -69,9 +71,11 @@ class Coordinador:
             'direccion_1': SistemaDireccion1(),
         }
 
+        # Para almacenar los sistemas activados y diagnosticos
         self.sistemas_activados = []
         self.diagnosticos_finales = []
         
+        # Se resetea el router y se declara el vehículo
         self.router.reset()
         self.router.declare(self.vehiculo)
 
@@ -97,7 +101,7 @@ class Coordinador:
             print(f"Sistemas activados por el router: {self.sistemas_activados}")
             respuesta = None
 
-        # --- Fase 2: Ejecutar SISTEMAS ESPECIALISTAS ---
+        # Ejecuta los sistemas activados
         while self.sistemas_activados:
             sistema_nombre = self.sistemas_activados[0]
             
@@ -116,13 +120,16 @@ class Coordinador:
             if respuesta:
                 sistema.declare(Estado(clave=respuesta['clave'], valor=respuesta['valor']))
 
+            # Comienza las preguntas del sistema actual
             sistema.run()
 
+            # Obtiene la siguiente pregunta
             pregunta = sistema.obtener_pregunta_actual()
             if pregunta:
                 sistema.limpiar_pregunta_actual()
                 return {'pregunta': pregunta}
             
+            # Obtiene los diagnósticos
             diags = sistema.obtener_diagnosticos()
             for diag in diags:
                 if 'sistema' not in diag:
@@ -131,6 +138,7 @@ class Coordinador:
             print(f"Diagnósticos de '{sistema_nombre}': {diags}")
             self.diagnosticos_finales.extend(diags)
             
+            # Popea el sistema activado
             self.sistemas_activados.pop(0)
             respuesta = None 
 
@@ -141,7 +149,7 @@ class Coordinador:
         destino.declare(self.vehiculo)
         destino.declare(Sistema(area=sistema_nombre))
         
-        # Transferir TODOS los hechos Estado del router
+        # Transferir todos los hechos Estado del router
         estados_transferidos = 0
         for hecho in origen.facts.values():
             if isinstance(hecho, Estado):
@@ -157,40 +165,53 @@ class ModernApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("🔧 Asistente Mecánico Inteligente")
-        self.geometry("800x700")
+        
+        # Configurar pantalla completa
+        self.state('zoomed')
         self.configure(bg='#f8f9fa')
         
         # Configurar estilo moderno
         self._configurar_estilos()
+
+        # Configurar el header
+        header_frame = tk.Frame(self, bg='#2c3e50', height=80)
+        header_frame.pack(fill="x", padx=0, pady=0)
+        header_frame.pack_propagate(False)
         
-        # Frame principal con gradiente
-        self.main_container = tk.Frame(self, bg='#f8f9fa')
-        self.main_container.pack(fill="both", expand=True, padx=0, pady=0)
-        
-        # Header con gradiente
-        self.header = tk.Frame(self.main_container, bg='#2c3e50', height=80)
-        self.header.pack(fill="x", padx=0, pady=0)
-        self.header.pack_propagate(False)
-        
-        ttk.Label(self.header, text="🔧 Asistente Mecánico Inteligente", 
+        # Configurar los labels del header
+        ttk.Label(header_frame, text="🔧 Asistente Mecánico Inteligente", 
                  style="Header.TLabel", background='#2c3e50').pack(expand=True)
-        ttk.Label(self.header, text="Sistema Experto de Diagnóstico Automotriz", 
+        ttk.Label(header_frame, text="Sistema Experto de Diagnóstico Automotriz", 
                  style="Subheader.TLabel", background='#2c3e50').pack(expand=True)
         
         # Container para los frames
-        self.container = ttk.Frame(self.main_container, style="Card.TFrame")
-        self.container.pack(fill="both", expand=True, padx=20, pady=20)
+        self.main_frame_container = tk.Frame(self, bg='#f8f9fa')
+        self.main_frame_container.pack(fill="both", expand=True, padx=20, pady=20)
         
+        # Posicionamiento de frames
         self.frames = {}
         for F in (FrameVehiculo, FramePregunta, FrameDiagnostico):
-            frame = F(self.container, self)
+            frame = F(self.main_frame_container, self)
             self.frames[F] = frame
+            # Posicionar en grid todos en la misma celda
             frame.grid(row=0, column=0, sticky="nsew")
+
+        # configuracion de columnas y filas
+        self.main_frame_container.grid_rowconfigure(0, weight=1)
+        self.main_frame_container.grid_columnconfigure(0, weight=1)
 
         self.coordinador = None
         self.pregunta_actual = None
         
+        # Muestra el frame
         self.mostrar_frame(FrameVehiculo)
+        
+        # Atajos de teclado
+        self.bind('<F11>', lambda e: self.toggle_fullscreen())
+        self.bind('<Escape>', lambda e: self.attributes('-fullscreen', False))
+
+    def toggle_fullscreen(self):
+        self.attributes('-fullscreen', not self.attributes('-fullscreen'))
 
     def _configurar_estilos(self):
         style = ttk.Style()
@@ -215,31 +236,48 @@ class ModernApp(tk.Tk):
         
         # Botones modernos
         style.configure("Primary.TButton", font=('Segoe UI', 11, 'bold'), 
-                       padding=(20, 10), background=colores['primary'], 
-                       foreground='white', borderwidth=0, focuscolor='none')
+                    padding=(20, 10), background=colores['primary'], 
+                    foreground='white', borderwidth=0, focuscolor='none')
         style.map("Primary.TButton",
-                 background=[('active', '#2980b9'), ('pressed', '#21618c')])
+                background=[('active', '#2980b9'), ('pressed', '#21618c')])
         
         style.configure("Success.TButton", font=('Segoe UI', 11, 'bold'),
-                       padding=(20, 10), background=colores['success'],
-                       foreground='white', borderwidth=0)
+                    padding=(20, 10), background=colores['success'],
+                    foreground='white', borderwidth=0)
         style.map("Success.TButton",
-                 background=[('active', '#27ae60'), ('pressed', '#219653')])
+                background=[('active', '#27ae60'), ('pressed', '#219653')])
+        
+        style.configure("Small.TButton", font=('Segoe UI', 10),
+                    padding=(5, 2), background=colores['dark'],
+                    foreground='white')
+        style.map("Small.TButton",
+                background=[('active', '#34495e')])
         
         # Entradas modernas
         style.configure("Modern.TEntry", font=('Segoe UI', 11), 
-                       padding=(10, 8), borderwidth=1, relief='flat',
-                       fieldbackground='#f8f9fa')
+                    padding=(10, 8), borderwidth=1, relief='flat',
+                    fieldbackground='#f8f9fa')
         
         # Checkbuttons y Radiobuttons modernos
-        style.configure("Modern.TCheckbutton", font=('Segoe UI', 10), 
-                       background='white', foreground='#2c3e50')
-        style.configure("Modern.TRadiobutton", font=('Segoe UI', 10),
-                       background='white', foreground='#2c3e50')
+        style.configure("Modern.TCheckbutton", 
+                    font=('Segoe UI', 11),  
+                    background='white', 
+                    foreground='#2c3e50',
+                    padding=(8, 8))
+        
+        style.configure("Modern.TRadiobutton",
+                    font=('Segoe UI', 11),
+                    background='white',
+                    foreground='#2c3e50',
+                    padding=(8, 8))
 
     def mostrar_frame(self, frame_clase):
+        
+        for frame in self.frames.values():
+            frame.grid_remove()
+        
         frame = self.frames[frame_clase]
-        frame.tkraise()
+        frame.grid()
 
     def iniciar_diagnostico(self, vehiculo_data):
         vehiculo = Vehiculo(
@@ -280,18 +318,31 @@ class FrameVehiculo(ttk.Frame):
     def __init__(self, parent, controller):
         super().__init__(parent, style="Card.TFrame")
         self.controller = controller
+        
+        # Configurar expansión
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        
         self._crear_interfaz()
 
     def _crear_interfaz(self):
+        # Contenedor principal que se expande
+        main_content = ttk.Frame(self, style="Card.TFrame")
+        main_content.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
+        main_content.grid_rowconfigure(2, weight=1)
+        main_content.grid_columnconfigure(0, weight=1)
+        
         # Título
-        ttk.Label(self, text="🚗 Datos del Vehículo", style="Title.TLabel").pack(pady=30)
+        ttk.Label(main_content, text="🚗 Datos del Vehículo", style="Title.TLabel").grid(row=0, column=0, pady=30)
         
-        ttk.Label(self, text="Complete la información de su vehículo para comenzar el diagnóstico:", 
-                 style="Normal.TLabel").pack(pady=10)
+        ttk.Label(main_content, text="Complete la información de su vehículo para comenzar el diagnóstico:", 
+                 style="Normal.TLabel").grid(row=1, column=0, pady=10)
         
-        # Formulario en contenedor con sombra
-        form_container = ttk.Frame(self, style="Card.TFrame")
-        form_container.pack(pady=20, padx=40, fill='x')
+        # Formulario
+        form_container = ttk.Frame(main_content, style="Card.TFrame")
+        form_container.grid(row=2, column=0, sticky="nsew", pady=20, padx=40)
+        form_container.grid_rowconfigure(3, weight=1)
+        form_container.grid_columnconfigure(0, weight=1)
         
         # Campos del formulario
         campos = [
@@ -302,37 +353,38 @@ class FrameVehiculo(ttk.Frame):
         
         for i, (texto, var_name) in enumerate(campos):
             row_frame = ttk.Frame(form_container, style="Card.TFrame")
-            row_frame.pack(fill='x', pady=12)
+            row_frame.grid(row=i, column=0, sticky='ew', pady=12)
+            row_frame.grid_columnconfigure(1, weight=1)
             
             ttk.Label(row_frame, text=texto, style="Normal.TLabel", 
-                     width=12, anchor='e').pack(side='left', padx=(0, 10))
+                     width=12, anchor='e').grid(row=0, column=0, padx=(0, 10))
             
             var = tk.StringVar()
             setattr(self, var_name, var)
             
             entry = ttk.Entry(row_frame, textvariable=var, style="Modern.TEntry", 
                              font=('Segoe UI', 11))
-            entry.pack(side='left', fill='x', expand=True, ipady=8)
+            entry.grid(row=0, column=1, sticky='ew', ipady=8)
         
         # Botón de inicio
-        btn_frame = ttk.Frame(self, style="Card.TFrame")
-        btn_frame.pack(pady=30)
+        btn_container = ttk.Frame(form_container, style="Card.TFrame")
+        btn_container.grid(row=4, column=0, sticky='s', pady=30)
         
-        ttk.Button(btn_frame, text="🎯 Comenzar Diagnóstico", 
+        ttk.Button(btn_container, text="🎯 Comenzar Diagnóstico", 
                   command=self.iniciar, style="Primary.TButton").pack(pady=10)
-
+        
     def iniciar(self):
         datos = {
             'marca': self.marca_var.get(),
             'modelo': self.modelo_var.get(),
             'anio': self.anio_var.get()
         }
-        #Lo comente para estar haciendo pruebas y no tener que estar poniendo los datos a cada rato jksjsk
+        # Lo comente para estar haciendo pruebas y no tener que estar poniendo los datos a cada rato jksjsk
         #if not all(datos.values()):
             #messagebox.showwarning("Datos Incompletos", "Por favor, complete todos los campos.")
             #return
         self.controller.iniciar_diagnostico(datos)
-        
+            
     def limpiar_campos(self):
         self.marca_var.set("")
         self.modelo_var.set("")
@@ -348,41 +400,84 @@ class FramePregunta(ttk.Frame):
         self._crear_interfaz()
 
     def _crear_interfaz(self):
+        # Configurar expansión del frame principal
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        
+        # Contenedor principal
+        main_content = ttk.Frame(self, style="Card.TFrame")
+        main_content.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
+        main_content.grid_rowconfigure(2, weight=1)
+        main_content.grid_columnconfigure(0, weight=1)
+        
         # Icono de pregunta
-        self.icono_label = ttk.Label(self, text="❓", font=('Segoe UI', 24),
+        self.icono_label = ttk.Label(main_content, text="❓", font=('Segoe UI', 24),
                                 background='white')
-        self.icono_label.pack(pady=20)
+        self.icono_label.grid(row=0, column=0, pady=(10, 0))
         
         # Pregunta
-        self.label_pregunta = ttk.Label(self, text="Pregunta...", 
-                                    style="Title.TLabel", wraplength=600,
+        self.label_pregunta = ttk.Label(main_content, text="Pregunta...", 
+                                    style="Title.TLabel", wraplength=700,
                                     justify='center')
-        self.label_pregunta.pack(pady=10, padx=30)
+        self.label_pregunta.grid(row=1, column=0, pady=15, padx=30)
         
-        # Contenedor de opciones con scroll
-        opciones_container = ttk.Frame(self, style="Card.TFrame")
-        opciones_container.pack(pady=20, padx=40, fill='both', expand=True)
+        self.opciones_container = ttk.Frame(main_content, style="Card.TFrame")
+        self.opciones_container.grid(row=2, column=0, sticky="nsew", pady=20, padx=20)
         
-        # Canvas y scrollbar para opciones largas
-        self.canvas = tk.Canvas(opciones_container, bg='white', highlightthickness=0)
-        scrollbar = ttk.Scrollbar(opciones_container, orient="vertical", command=self.canvas.yview)
-        self.scrollable_frame = ttk.Frame(self.canvas, style="Card.TFrame")
-        
-        self.scrollable_frame.bind(
-            "<Configure>",
-            lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-        )
-        
-        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-        self.canvas.configure(yscrollcommand=scrollbar.set)
-        
-        self.canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
+        # Crear un Frame con Scrollbar
+        self._crear_scrollable_area()
         
         # Botón siguiente
-        self.boton_siguiente = ttk.Button(self, text="➡️ Siguiente", 
+        btn_container = ttk.Frame(main_content, style="Card.TFrame")
+        btn_container.grid(row=3, column=0, pady=20)
+        
+        self.boton_siguiente = ttk.Button(btn_container, text="➡️ Siguiente", 
                                         command=self.responder, style="Success.TButton")
-        self.boton_siguiente.pack(pady=20, ipadx=20, ipady=10)
+        self.boton_siguiente.pack(ipadx=20, ipady=10)
+
+    def _crear_scrollable_area(self):
+        """Crea un área scrollable sin espacio en blanco"""
+        # Frame principal para el área scrollable
+        scroll_frame = ttk.Frame(self.opciones_container, style="Card.TFrame")
+        scroll_frame.pack(fill="both", expand=True)
+        
+        # Crear Scrollbar
+        scrollbar = ttk.Scrollbar(scroll_frame, orient="vertical")
+        scrollbar.pack(side="right", fill="y")
+        
+        # Crear Canvas
+        self.canvas = tk.Canvas(
+            scroll_frame, 
+            bg='white', 
+            highlightthickness=0,
+            yscrollcommand=scrollbar.set
+        )
+        self.canvas.pack(side="left", fill="both", expand=True)
+        
+        # Configurar scrollbar
+        scrollbar.config(command=self.canvas.yview)
+        
+        # Crear frame interno para las opciones
+        self.scrollable_frame = ttk.Frame(self.canvas, style="Card.TFrame")
+        
+        # Crear ventana en el canvas
+        self.canvas_frame = self.canvas.create_window(
+            (0, 0), 
+            window=self.scrollable_frame, 
+            anchor="nw",
+            tags="scrollable_frame"
+        )
+        
+        # Configurar eventos para ajuste automático del ancho
+        def configurar_scroll_region(event):
+            self.canvas.itemconfig("scrollable_frame", width=event.width)
+            self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        
+        def ajustar_ancho_frame(event):
+            self.canvas.itemconfig("scrollable_frame", width=event.width)
+        
+        self.canvas.bind("<Configure>", ajustar_ancho_frame)
+        self.scrollable_frame.bind("<Configure>", configurar_scroll_region)
 
     def actualizar_pregunta(self, pregunta):
         self.pregunta_actual = pregunta
@@ -396,27 +491,66 @@ class FramePregunta(ttk.Frame):
         
         es_multiselect = (pregunta['clave'] == 'sintoma_general')
         
+        # Configurar grid para 3 columnas
+        for i in range(3):
+            self.scrollable_frame.columnconfigure(i, weight=1)
+
+        padding_x = 15
+        padding_y = 8
+        
         if es_multiselect:
-            for opcion in pregunta['opciones']:
+            for idx, opcion in enumerate(pregunta['opciones']):
                 var = tk.StringVar(value="")
+                fila = idx // 3
+                columna = idx % 3
+                
+                texto_formateado = self._formatear_texto_opcion(opcion)
+                
                 cb = ttk.Checkbutton(self.scrollable_frame, 
-                                text=opcion.replace('_', ' '),
+                                text=texto_formateado,
                                 variable=var, 
                                 onvalue=opcion, 
                                 offvalue="",
-                                style="Modern.TCheckbutton")
-                cb.pack(anchor='w', pady=8, padx=10)  # Más espacio: pady=8
+                                style="Modern.TCheckbutton",
+                                width=32)
+                cb.grid(row=fila, column=columna, sticky='w', padx=padding_x, pady=padding_y)
                 self.opciones_vars.append(var)
         else:
             self.respuesta_var = tk.StringVar(value="")
-            for opcion in pregunta['opciones']:
+            for idx, opcion in enumerate(pregunta['opciones']):
+                fila = idx // 3
+                columna = idx % 3
+                
+                texto_formateado = self._formatear_texto_opcion(opcion)
+                
                 rb = ttk.Radiobutton(self.scrollable_frame, 
-                                text=opcion.replace('_', ' '),
+                                text=texto_formateado,
                                 variable=self.respuesta_var, 
                                 value=opcion,
-                                style="Modern.TRadiobutton")
-                rb.pack(anchor='w', pady=10, padx=15)  # Más espacio: pady=10, padx=15
+                                style="Modern.TRadiobutton",
+                                width=32)
+                rb.grid(row=fila, column=columna, sticky='w', padx=padding_x, pady=padding_y)
             self.opciones_vars = [self.respuesta_var]
+        
+        # Forzar actualización del layout
+        self.scrollable_frame.update_idletasks()
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        self.canvas.yview_moveto(0)
+
+    def _formatear_texto_opcion(self, texto):
+        """Formatea el texto de las opciones para mejor legibilidad"""
+        texto = texto.replace('_', ' ').title()
+        
+        palabras = texto.split()
+        if len(palabras) > 4:
+            puntos_division = [3, 4]
+            for punto in puntos_division:
+                if punto < len(palabras):
+                    if punto + 1 < len(palabras) and len(palabras[punto]) > 2:
+                        texto = ' '.join(palabras[:punto]) + '\n' + ' '.join(palabras[punto:])
+                        break
+        
+        return texto
 
     def responder(self):
         clave = self.pregunta_actual['clave']
@@ -453,7 +587,6 @@ class FrameDiagnostico(ttk.Frame):
         result_container = ttk.Frame(self, style="Card.TFrame")
         result_container.pack(fill="both", expand=True, padx=20, pady=10)
         
-        # Text area con mejor estilo
         self.text_resultados = tk.Text(result_container, height=20, width=70, wrap='word',
                                       font=('Segoe UI', 10), bg='#f8f9fa', 
                                       borderwidth=0, highlightthickness=0,
