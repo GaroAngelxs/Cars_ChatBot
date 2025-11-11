@@ -47,7 +47,12 @@ class RouterDiagnosticos(SistemaBase):
             'No_enfria': 'El aire acondicionado no enfría',
             'Aire_huele_mal' : 'El aire acondicionado huele mal',
             'Compresor_no_arranca': 'El compresor de aire acondicionado no arranca',
-            'Compresor_ruidos_anormales':'El compresor produce ruidos anormales'
+            'Compresor_ruidos_anormales':'El compresor produce ruidos anormales',
+            'Luz_Check_Engine_Encendida':'Testigo de check engine encendido',
+            'Luz_Aceite_Encendida': 'Testigo de aceite encendido',
+            'Luz_Bateria_Encendida':'Testigo de bateria encendido',
+            'Luz_Frenos_Encendida': 'Testigo de frenos encendido',
+            'Luz_Temperatura_Encendida': 'Testigo de temperatura encendido'
         }
 
     @DefFacts()
@@ -258,6 +263,27 @@ class RouterDiagnosticos(SistemaBase):
         elif sintoma == 'Compresor_ruidos_anormales':
             self.declare(Sistema(area='acondicionado_4'))
             self.sistemas_activados.add('acondicionado_4')
+            
+        elif sintoma == 'Luz_Check_Engine_Encendida':
+            self.declare(Sintoma(area='sensores_1'))
+            self.sistemas_activados.add('sensores_1')
+            
+        elif sintoma == 'Luz_Aceite_Encendida':
+            self.declare(Sintoma(area='sensores_2'))
+            self.sistemas_activados.add('sensores_2')
+            
+        elif sintoma == 'Luz_Bateria_Encendida':
+            self.declare(Sintoma(area='sensores_3'))
+            self.sistemas_activados.add('sensores_3')
+            
+        elif sintoma == 'Luz_Frenos_Encendida':
+            self.declare(Sintoma(area='sensores_4'))
+            self.sistemas_activados.add('sensores_4')
+            
+        elif sintoma == 'Luz_Temperatura_Encendida':
+            self.declare(Sintoma(area='sensores_5'))
+            self.sistemas_activados.add('sensores_5')
+            
 
 
     def obtener_sistemas_activados(self):
