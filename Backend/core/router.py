@@ -55,7 +55,7 @@ class RouterDiagnosticos(SistemaBase):
             'Luz_Temperatura_Encendida': 'Testigo de temperatura encendido',
             'Volante_vibra': 'Mi volante vibra',
             'Volante_duro': 'Tengo que aplicar mucha fuerza para girar el volante',
-            'Realizar_chequeo_de_mantenimiento': 'Chequeo de mantenimiento general'
+            'Realizar_chequeo_de_mantenimiento': 'Chequeo de mantenimiento general',
         }
 
     @DefFacts()
@@ -299,7 +299,6 @@ class RouterDiagnosticos(SistemaBase):
             self.declare(Sistema(area='mantenimiento_general'))
             self.sistemas_activados.add('mantenimiento_general')
             print(f"Sistema activado: Mantenimiento General")
-            
 
 
     def obtener_sistemas_activados(self):

@@ -19,7 +19,7 @@ class Mantenimiento_General(SistemaBase):
             opciones=['si', 'no']
         ))
     
-    #  1. Kilometros desde ultimo mantenimiento 
+    #  1. KM DESDE EL ULTIMO MANTENIMIENTOS
     @Rule(Sistema(area='mantenimiento_general'),
           Estado(clave='km_ultimo_servicio', valor='si'))
     def recomendar_servicio(self):
@@ -39,7 +39,7 @@ class Mantenimiento_General(SistemaBase):
 
     #  2. FILTRO DE AIRE
     @Rule(Sistema(area='mantenimiento_general'),
-          Estado(clave__exists=True), 
+          Estado(clave='resultado_km_servicio'), 
           NOT(Estado(clave='filtro_aire_km')))
     def preguntar_filtro_aire(self):
         self.declare(Pregunta(
@@ -67,7 +67,7 @@ class Mantenimiento_General(SistemaBase):
 
     #  3. BUJÍAS
     @Rule(Sistema(area='mantenimiento_general'),
-          Estado(clave__exists=True),
+          Estado(clave='resultado_filtro_aire'),
           NOT(Estado(clave='bujias_km')))
     def preguntar_bujias(self):
         self.declare(Pregunta(
@@ -95,7 +95,7 @@ class Mantenimiento_General(SistemaBase):
 
     #  4. BATERÍA
     @Rule(Sistema(area='mantenimiento_general'),
-          Estado(clave__exists=True), 
+          Estado(clave='resultado_bujias'),
           NOT(Estado(clave='bateria_anios')))
     def preguntar_bateria(self):
         self.declare(Pregunta(
@@ -120,8 +120,8 @@ class Mantenimiento_General(SistemaBase):
             valor="No necesita este mantenimiento"
         ))
 
-    # REGLA FINAL: COMPILAR RESULTADOS 
-    
+
+    # REGLA FINAL PARA COMPILAR EL DIAGNÓSTICO 
     @Rule(Sistema(area='mantenimiento_general'),
           Estado(clave='resultado_km_servicio', valor=MATCH.res1),
           Estado(clave='resultado_filtro_aire', valor=MATCH.res2),
@@ -130,6 +130,7 @@ class Mantenimiento_General(SistemaBase):
     def compilar_diagnostico_mantenimiento(self, res1, res2, res3, res4):
         
         causa = "Reporte de Mantenimiento General Preventivo."
+        
         solucion = (
             f"1. Servicio por KM: {res1}\n"
             f"2. Filtro de Aire: {res2}\n"
@@ -140,5 +141,5 @@ class Mantenimiento_General(SistemaBase):
         self.diagnosticos_encontrados.append({
             'causa': causa,
             'solucion': solucion,
-            'severidad': "Baja"
+            'severidad': "Baja" 
         })

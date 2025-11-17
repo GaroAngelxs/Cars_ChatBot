@@ -14,7 +14,7 @@ from sistemas.aire_acondicionado import *
 from sistemas.sensores_tablero import *
 from sistemas.suspension import *
 from sistemas.direccion import *
-from sistemas.mantenimiento_general import *
+from sistemas.mantenimiento_general import Mantenimiento_General
 from hechos import Vehiculo, Estado, Sistema 
 
 class Coordinador:
