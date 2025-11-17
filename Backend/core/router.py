@@ -54,7 +54,8 @@ class RouterDiagnosticos(SistemaBase):
             'Luz_Frenos_Encendida': 'Testigo de frenos encendido',
             'Luz_Temperatura_Encendida': 'Testigo de temperatura encendido',
             'Volante_vibra': 'Mi volante vibra',
-            'Volante_duro': 'Tengo que aplicar mucha fuerza para girar el volante'
+            'Volante_duro': 'Tengo que aplicar mucha fuerza para girar el volante',
+            'Realizar_chequeo_de_mantenimiento': 'Chequeo de mantenimiento general'
         }
 
     @DefFacts()
@@ -293,6 +294,11 @@ class RouterDiagnosticos(SistemaBase):
         elif sintoma == 'Volante_duro':
             self.declare(Sintoma(area='direccion_1'))
             self.sistemas_activados.add('direccion_1')
+            
+        elif sintoma == 'Realizar_chequeo_de_mantenimiento':
+            self.declare(Sistema(area='mantenimiento_general'))
+            self.sistemas_activados.add('mantenimiento_general')
+            print(f"Sistema activado: Mantenimiento General")
             
 
 

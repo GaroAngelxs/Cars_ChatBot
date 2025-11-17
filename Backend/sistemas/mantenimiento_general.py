@@ -6,21 +6,22 @@ class Mantenimiento_General(SistemaBase):
     def __init__(self):
         super().__init__()
 
-    @Rule(Sistema(area='suspension_1'))
+    @Rule(Sistema(area='mantenimiento_general'))
     def iniciar_diagnostico_Mantenimiento(self):
-        print("Iniciando diagnóstico: Mantenimiento genetal")
+        print("Iniciando diagnóstico: Mantenimiento general")
     
     @Rule(Sistema(area='mantenimiento_general'),
-        NOT(Estado(clave='km_ultimo_servicio')))
+          NOT(Estado(clave='km_ultimo_servicio')))
     def preguntar_km_servicio(self):
         self.declare(Pregunta(
             clave='km_ultimo_servicio',
             texto="¿El vehículo supera los 5,000 km desde el último servicio?",
             opciones=['si', 'no']
         ))
+    
     #  1. Kilometros desde ultimo mantenimiento 
     @Rule(Sistema(area='mantenimiento_general'),
-        Estado(clave='km_ultimo_servicio', valor='si'))
+          Estado(clave='km_ultimo_servicio', valor='si'))
     def recomendar_servicio(self):
         self.declare(Estado(
             clave='resultado_km_servicio',
@@ -28,7 +29,7 @@ class Mantenimiento_General(SistemaBase):
         ))
 
     @Rule(Sistema(area='mantenimiento_general'),
-        Estado(clave='km_ultimo_servicio', valor='no'))
+          Estado(clave='km_ultimo_servicio', valor='no'))
     def no_requiere_servicio(self):
         self.declare(Estado(
             clave='resultado_km_servicio',
@@ -38,7 +39,8 @@ class Mantenimiento_General(SistemaBase):
 
     #  2. FILTRO DE AIRE
     @Rule(Sistema(area='mantenimiento_general'),
-        NOT(Estado(clave='filtro_aire_km')))
+          Estado(clave__exists=True), 
+          NOT(Estado(clave='filtro_aire_km')))
     def preguntar_filtro_aire(self):
         self.declare(Pregunta(
             clave='filtro_aire_km',
@@ -47,7 +49,7 @@ class Mantenimiento_General(SistemaBase):
         ))
 
     @Rule(Sistema(area='mantenimiento_general'),
-        Estado(clave='filtro_aire_km', valor='si'))
+          Estado(clave='filtro_aire_km', valor='si'))
     def reemplazar_filtro_aire(self):
         self.declare(Estado(
             clave='resultado_filtro_aire',
@@ -55,7 +57,7 @@ class Mantenimiento_General(SistemaBase):
         ))
 
     @Rule(Sistema(area='mantenimiento_general'),
-        Estado(clave='filtro_aire_km', valor='no'))
+          Estado(clave='filtro_aire_km', valor='no'))
     def no_reemplazar_filtro_aire(self):
         self.declare(Estado(
             clave='resultado_filtro_aire',
@@ -65,7 +67,8 @@ class Mantenimiento_General(SistemaBase):
 
     #  3. BUJÍAS
     @Rule(Sistema(area='mantenimiento_general'),
-        NOT(Estado(clave='bujias_km')))
+          Estado(clave__exists=True),
+          NOT(Estado(clave='bujias_km')))
     def preguntar_bujias(self):
         self.declare(Pregunta(
             clave='bujias_km',
@@ -74,7 +77,7 @@ class Mantenimiento_General(SistemaBase):
         ))
 
     @Rule(Sistema(area='mantenimiento_general'),
-        Estado(clave='bujias_km', valor='si'))
+          Estado(clave='bujias_km', valor='si'))
     def cambiar_bujias(self):
         self.declare(Estado(
             clave='resultado_bujias',
@@ -82,7 +85,7 @@ class Mantenimiento_General(SistemaBase):
         ))
 
     @Rule(Sistema(area='mantenimiento_general'),
-        Estado(clave='bujias_km', valor='no'))
+          Estado(clave='bujias_km', valor='no'))
     def no_cambiar_bujias(self):
         self.declare(Estado(
             clave='resultado_bujias',
@@ -92,7 +95,8 @@ class Mantenimiento_General(SistemaBase):
 
     #  4. BATERÍA
     @Rule(Sistema(area='mantenimiento_general'),
-        NOT(Estado(clave='bateria_anios')))
+          Estado(clave__exists=True), 
+          NOT(Estado(clave='bateria_anios')))
     def preguntar_bateria(self):
         self.declare(Pregunta(
             clave='bateria_anios',
@@ -101,7 +105,7 @@ class Mantenimiento_General(SistemaBase):
         ))
 
     @Rule(Sistema(area='mantenimiento_general'),
-        Estado(clave='bateria_anios', valor='si'))
+          Estado(clave='bateria_anios', valor='si'))
     def revisar_bateria(self):
         self.declare(Estado(
             clave='resultado_bateria',
@@ -109,9 +113,32 @@ class Mantenimiento_General(SistemaBase):
         ))
 
     @Rule(Sistema(area='mantenimiento_general'),
-        Estado(clave='bateria_anios', valor='no'))
+          Estado(clave='bateria_anios', valor='no'))
     def no_revisar_bateria(self):
         self.declare(Estado(
             clave='resultado_bateria',
             valor="No necesita este mantenimiento"
         ))
+
+    # REGLA FINAL: COMPILAR RESULTADOS 
+    
+    @Rule(Sistema(area='mantenimiento_general'),
+          Estado(clave='resultado_km_servicio', valor=MATCH.res1),
+          Estado(clave='resultado_filtro_aire', valor=MATCH.res2),
+          Estado(clave='resultado_bujias', valor=MATCH.res3),
+          Estado(clave='resultado_bateria', valor=MATCH.res4))
+    def compilar_diagnostico_mantenimiento(self, res1, res2, res3, res4):
+        
+        causa = "Reporte de Mantenimiento General Preventivo."
+        solucion = (
+            f"1. Servicio por KM: {res1}\n"
+            f"2. Filtro de Aire: {res2}\n"
+            f"3. Bujías: {res3}\n"
+            f"4. Batería: {res4}"
+        )
+
+        self.diagnosticos_encontrados.append({
+            'causa': causa,
+            'solucion': solucion,
+            'severidad': "Baja"
+        })
