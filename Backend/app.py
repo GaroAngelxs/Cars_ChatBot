@@ -14,6 +14,7 @@ from sistemas.aire_acondicionado import *
 from sistemas.sensores_tablero import *
 from sistemas.suspension import *
 from sistemas.direccion import *
+from sistemas.mantenimiento_general import *
 from hechos import Vehiculo, Estado, Sistema 
 
 class Coordinador:
@@ -69,6 +70,7 @@ class Coordinador:
             'sensores_5': SistemaSensores5(),
             'suspension_1': SistemaSuspension1(),
             'direccion_1': SistemaDireccion1(),
+            'mantenimiento_general': Mantenimiento_General()
         }
 
         # Para almacenar los sistemas activados y diagnosticos
