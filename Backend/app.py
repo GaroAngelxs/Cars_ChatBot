@@ -69,6 +69,9 @@ class Coordinador:
             'sensores_4': SistemaSensores4(),
             'sensores_5': SistemaSensores5(),
             'suspension_1': SistemaSuspension1(),
+            'suspension_2': SistemaSuspension2(),
+            'suspension_3': SistemaSuspension3(),
+            'suspension_4': SistemaSuspension4(),
             'direccion_1': SistemaDireccion1(),
             'mantenimiento_general': Mantenimiento_General()
         }

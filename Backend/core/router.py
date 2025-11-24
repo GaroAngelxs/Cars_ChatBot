@@ -55,6 +55,9 @@ class RouterDiagnosticos(SistemaBase):
             'Luz_Temperatura_Encendida': 'Testigo de temperatura encendido',
             'Volante_vibra': 'Mi volante vibra',
             'Volante_duro': 'Tengo que aplicar mucha fuerza para girar el volante',
+            'Vehiculo_se_inclina_al_girar': 'El vehículo se inclina demasiado al girar',
+            'Golpeteo_en_baches': 'Se escucha golpeteo al pasar baches',
+            'Vehiculo_se_desvia': 'El vehículo se desvía hacia un lado',
             'Realizar_chequeo_de_mantenimiento': 'Chequeo de mantenimiento general',
         }
 
@@ -288,12 +291,24 @@ class RouterDiagnosticos(SistemaBase):
             self.sistemas_activados.add('sensores_5')
 
         elif sintoma == 'Volante_vibra':
-            self.declare(Sintoma(area='suspension_1'))
+            self.declare(Sistema(area='suspension_1'))
             self.sistemas_activados.add('suspension_1')
 
         elif sintoma == 'Volante_duro':
-            self.declare(Sintoma(area='direccion_1'))
+            self.declare(Sistema(area='direccion_1'))
             self.sistemas_activados.add('direccion_1')
+
+        elif sintoma == 'Vehiculo_se_inclina_al_girar':
+            self.declare(Sistema(area='suspension_2'))
+            self.sistemas_activados.add('suspension_2')
+
+        elif sintoma == 'Golpeteo_en_baches':
+            self.declare(Sistema(area='suspension_3'))
+            self.sistemas_activados.add('suspension_3')
+
+        elif sintoma == 'Vehiculo_se_desvia':
+            self.declare(Sistema(area='suspension_4'))
+            self.sistemas_activados.add('suspension_4')
             
         elif sintoma == 'Realizar_chequeo_de_mantenimiento':
             self.declare(Sistema(area='mantenimiento_general'))
