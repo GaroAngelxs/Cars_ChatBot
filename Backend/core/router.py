@@ -1,13 +1,20 @@
+# Librerías clave: Herramientas principales que necesita el sistema.
 from experta import *
 from hechos import *
 from core.base import SistemaBase
 
+
+# Clase RouterDiagnosticos: Encargada de tomar los síntomas e indicar qué partes del auto revisar.
 class RouterDiagnosticos(SistemaBase):
+    
     def __init__(self):
         super().__init__()
+        
+        # Una lista para guardar las áreas del auto que deben ser revisadas (Ej: 'motor_1', 'frenos_2').
         self.sistemas_activados = set()
+        
+        # Una lista para recordar los problemas (síntomas) que el usuario mencionó.
         self.sintomas_ingresados = set()
-
         self.mapeo_sintomas = {
             'El_motor_no_arranca': 'El motor del auto no arranca',
             'El_auto_se_apaga': 'El auto se apaga repentinamente',
@@ -61,24 +68,25 @@ class RouterDiagnosticos(SistemaBase):
             'Realizar_chequeo_de_mantenimiento': 'Chequeo de mantenimiento general',
         }
 
+    # Funcion que le da la señal de inicio al motor de reglas.
     @DefFacts()
     def _initial_action(self):
         """Hecho inicial para activar el motor"""
         yield Accion(tipo='iniciar_diagnostico')
 
-    @Rule(Accion(tipo='iniciar_diagnostico'),
-          NOT(Sintoma()))
+    # Regla: Se activa al inicio, si no se ha preguntado ningún síntoma.
     def preguntar_sintomas_generales(self):
 
         opciones_naturales = list(self.mapeo_sintomas.values())
 
+        # Crea la pregunta general y la guarda en memoria.
         self.declare(Pregunta(
             clave='sintoma_general',
             texto="¿Qué síntomas presenta su vehículo?",
             opciones=opciones_naturales
         ))
 
-    # Procesar MÚLTIPLES síntomas
+    # Regla: Procesa los problemas (síntomas) que el usuario acaba de ingresar.
     @Rule(Estado(clave='sintoma_general', valor=MATCH.valores))
     def procesar_sintomas_multiples(self, valores):
         """Procesa múltiples síntomas ingresados por el usuario"""
@@ -86,16 +94,19 @@ class RouterDiagnosticos(SistemaBase):
 
             sintomas_naturales = [s.strip() for s in valores.split(',')]
 
+            # El "traductor" al revés (de texto a código interno).
             mapeo_inverso = {v: k for k, v in self.mapeo_sintomas.items()}
 
             sintomas_codigos = []
 
+            # Recorre cada síntoma para encontrar su código.
             for sintoma_natural in sintomas_naturales:
                 if sintoma_natural in mapeo_inverso:
                     codigo = mapeo_inverso[sintoma_natural]
                     sintomas_codigos.append(codigo)
                 else:
                     codigo_encontrado = None
+                    # Intenta encontrar el código aunque el texto no sea exacto.
                     for texto_natural, codigo in mapeo_inverso.items():
                         if sintoma_natural.lower() in texto_natural.lower():
                             codigo_encontrado = codigo
@@ -106,14 +117,18 @@ class RouterDiagnosticos(SistemaBase):
                     else:
                         print(f"Síntoma no reconocido: {sintoma_natural}")
             
+            # Guarda los códigos de los síntomas que sí se reconocieron.
             self.sintomas_ingresados.update(sintomas_codigos)
 
+            # Llama a otra función para activar el área de revisión correspondiente a cada síntoma.
             for codigo in sintomas_codigos:
                 self.procesar_sintoma_individual(codigo)
 
+    # Funcipn para procesar un solo sintoma y decidir que area del auto revisar.
     def procesar_sintoma_individual(self, sintoma):
         """Procesa un síntoma individual por su código"""
 
+        # Cada 'elif' es un chequeo: "Si el síntoma es este, activa esta area (Sistema) de revision".
         if sintoma == 'El_motor_no_arranca':
             self.declare(Sistema(area='motor_1'))
             self.sistemas_activados.add('motor_1')
@@ -145,7 +160,7 @@ class RouterDiagnosticos(SistemaBase):
         elif sintoma == 'Liquido_verde_o_rojo_debajo_del_motor':
             self.declare(Sistema(area='enfriamiento_2'))
             self.sistemas_activados.add('enfriamiento_2')
- 
+    
         elif sintoma == 'El_ventilador_del_auto_no_hace_ruido':
             self.declare(Sistema(area='enfriamiento_3'))
             self.sistemas_activados.add('enfriamiento_3')
@@ -316,10 +331,12 @@ class RouterDiagnosticos(SistemaBase):
             print(f"Sistema activado: Mantenimiento General")
 
 
+    # Función para ver qué áreas del auto se han marcado para revisión.
     def obtener_sistemas_activados(self):
         """Retorna los sistemas que necesitan diagnóstico"""
         return self.sistemas_activados.copy()
     
+    # Función para obtener los problemas que el usuario reportó (en lenguaje normal)
     def obtener_sintomas_ingresados(self):
         """Retorna los síntomas ingresados por el usuario"""
         sintomas_naturales = []
@@ -328,10 +345,12 @@ class RouterDiagnosticos(SistemaBase):
                 sintomas_naturales.append(self.mapeo_sintomas[codigo])
         return sintomas_naturales
 
+    # Función para obtener los códigos internos de los problemas reportados
     def obtener_sintomas_codigos(self):
         """Retorna los síntomas en formato código (para uso interno)"""
         return self.sintomas_ingresados.copy()
     
+    # Función para borrar todos los datos temporales
     def limpiar_hechos_temporales(self):
         """Limpia hechos temporales entre ejecuciones"""
         self.sistemas_activados.clear()
