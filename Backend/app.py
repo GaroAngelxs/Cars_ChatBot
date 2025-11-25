@@ -171,9 +171,14 @@ class ModernApp(tk.Tk):
         super().__init__()
         self.title("🔧 Asistente Mecánico Inteligente")
         
-        # Configurar pantalla completa
-        self.state('zoomed')
-        self.configure(bg='#f8f9fa')
+        try:
+            self.state('zoomed')
+        except tk.TclError:
+            self.attributes('-zoomed', True)
+
+        # Variable para datos del auto
+        self.vehiculo_data_guardado = None
+
         
         # Configurar estilo moderno
         self._configurar_estilos()
@@ -285,6 +290,7 @@ class ModernApp(tk.Tk):
         frame.grid()
 
     def iniciar_diagnostico(self, vehiculo_data):
+        self.vehiculo_data_guardado = vehiculo_data
         vehiculo = Vehiculo(
             marca=vehiculo_data['marca'] or "Desconocido",
             modelo=vehiculo_data['modelo'] or "Desconocido",
@@ -315,8 +321,13 @@ class ModernApp(tk.Tk):
     def reiniciar(self):
         self.coordinador = None
         self.pregunta_actual = None
-        self.frames[FrameVehiculo].limpiar_campos()
-        self.mostrar_frame(FrameVehiculo)
+
+        if not self.vehiculo_data_guardado:
+            self.frames[FrameVehiculo].limpiar_campos()
+            self.mostrar_frame(FrameVehiculo)
+            return
+        
+        self.iniciar_diagnostico(self.vehiculo_data_guardado)
 
 
 class FrameVehiculo(ttk.Frame):
