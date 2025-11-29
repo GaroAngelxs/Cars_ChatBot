@@ -4,7 +4,24 @@ from hechos import *
 # Clase base para el sistema de reglas
 # Aqui se manejan las preguntas que se muestran al usuario
 # y los diagnosticos que se van encontrando
+"""
+Componentes base del motor de reglas de Cars_ChatBot.
+
+Este módulo define la clase SistemaBase, que extiende el motor KnowledgeEngine
+de experta y proporciona utilidades comunes para todos los sistemas especialistas,
+como el almacenamiento de diagnósticos generados y la gestión de preguntas.
+"""
+
 class SistemaBase(KnowledgeEngine):
+    """Clase base para todos los sistemas especialistas de diagnóstico.
+
+    Responsabilidades principales:
+    - Ejecutar las reglas asociadas a un subsistema del vehículo.
+    - Ir acumulando en `diagnosticos_encontrados` las posibles causas
+      y soluciones detectadas durante la inferencia.
+    - Proveer métodos auxiliares comunes (reinicio de estado, formateo
+      de resultados, etc.) que reutilizan los distintos módulos.
+    """
     def __init__(self):
         super().__init__()
 

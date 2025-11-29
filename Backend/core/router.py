@@ -1,13 +1,32 @@
 from experta import *
 from hechos import *
 from core.base import SistemaBase
+"""
+Router o sistema orquestador de Cars_ChatBot.
+
+Se encarga de:
+- Recibir los síntomas seleccionados por el usuario.
+- Mapear esos síntomas a las áreas o sistemas especialistas correspondientes.
+- Activar los sistemas (motor, frenos, combustible, etc.) y combinar
+  los diagnósticos producidos en una única respuesta.
+"""
 
 # Clase RouterDiagnosticos: Encargada de mapear los síntomas 
 class RouterDiagnosticos(SistemaBase):
+    """Orquestador principal del sistema experto.
+
+    Esta clase traduce los síntomas seleccionados por el usuario a áreas
+    específicas (por ejemplo 'frenos_1', 'combustible_3') y declara los
+    hechos necesarios para que cada sistema especialista ejecute sus reglas.
+    También consolida y devuelve el conjunto de diagnósticos encontrados.
+    """
     def __init__(self):
         super().__init__()
         self.sistemas_activados = set()
         self.sintomas_ingresados = set()
+
+        # Mapeo entre el nombre simbólico del síntoma seleccionado en la interfaz
+        # y el texto descriptivo que se muestra al usuario.
 
         self.mapeo_sintomas = {
             'El_motor_no_arranca': 'El motor del auto no arranca',
@@ -113,6 +132,12 @@ class RouterDiagnosticos(SistemaBase):
     # Función para procesar síntomas individualmente
     def procesar_sintoma_individual(self, sintoma):
         """Procesa un síntoma individual por su código"""
+        """Activa el sistema especialista correspondiente a un síntoma.
+
+        Recibe el nombre simbólico del síntoma (por ejemplo 'Pedal_de_freno_esponjoso')
+        y, según su valor, declara el hecho Sistema(area='frenos_1'),
+        'combustible_2', etc., además de registrar qué sistemas se han activado.
+        """
 
         # Motor
         if sintoma == 'El_motor_no_arranca':

@@ -3,9 +3,29 @@ from core.base import SistemaBase
 from hechos import *
 
 ### Sistema de frenos
+"""
+Sistema especialista para el diagnóstico del sistema de frenos.
 
+Este módulo define varios subconjuntos de reglas (SistemaFrenos1, SistemaFrenos2,
+etc.), cada uno enfocado en un grupo de síntomas específicos como:
+- Pedal esponjoso.
+- Chirridos al frenar.
+- Desvío del vehículo durante el frenado.
+- Vibraciones al frenar.
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
 # Grupo 1: Pedal esponjoso (Reglas 1-2)
 class SistemaFrenos1(SistemaBase):
+    """Diagnóstico de problemas relacionados con pedal de freno esponjoso.
+
+    Este sistema se activa cuando el usuario indica que el pedal se siente
+    esponjoso. A través de preguntas adicionales determina si la causa más
+    probable es:
+    - Presencia de aire en el sistema de frenos.
+    - Fuga en el circuito hidráulico (nivel de líquido bajo).
+    """
     def __init__(self):
         super().__init__()
 
@@ -70,6 +90,13 @@ class SistemaFrenos1(SistemaBase):
 
 # Grupo 2: Chirridos al frenar (Reglas 3-4)
 class SistemaFrenos2(SistemaBase):
+    """Diagnóstico de ruidos y chirridos al frenar.
+
+    Analiza el tipo de sonido que se presenta al frenar (metálico, intermitente,
+    etc.) para identificar problemas como:
+    - Pastillas de freno desgastadas.
+    - Acumulación de polvo o suciedad en el sistema.
+    """
     def __init__(self):
         super().__init__()
 
