@@ -2,6 +2,22 @@ from experta import *
 from core.base import SistemaBase
 from hechos import *
 
+"""
+Sistema especialista para el diagnóstico del sistema de sensores tablero.
+
+Este módulo define varios subconjuntos de reglas (sensores1, sensores2,
+etc.), cada uno enfocado en un grupo de síntomas específicos como:
+
+- Testigo check engine.
+- Testigo de aceite.
+- Testigo de bateria.
+- Testigo luz de freno.
+- Testigo de temperatura.
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
+
 # "TESTIGO CHECK ENGINE" 
 
 class SistemaSensores1(SistemaBase):

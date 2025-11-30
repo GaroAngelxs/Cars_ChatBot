@@ -2,6 +2,21 @@ from experta import *
 from core.base import SistemaBase
 from hechos import *
 
+"""
+Sistema especialista para el diagnóstico del sistema de transmision.
+
+Este módulo define varios subconjuntos de reglas (transmision1, transmision2,
+etc.), cada uno enfocado en un grupo de síntomas específicos como:
+
+- Cambios entran con dificultad.
+- ruidos metalicos marcha.
+- Auto avanza al acelerar.
+- Aceite de transmision bajo.
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
+
 class SistemaTransmision1(SistemaBase):
     def __init__(self):
         super().__init__()

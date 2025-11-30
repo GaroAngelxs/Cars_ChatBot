@@ -2,6 +2,17 @@ from experta import *
 from core.base import SistemaBase
 from hechos import *
 
+"""
+Sistema especialista para el diagnóstico del sistema de direccion.
+
+Este módulo define varios subconjuntos de reglas (direccion1), enfocado en un grupo de síntomas específicos como:
+
+- volante duro .
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
+
 #  SISTEMA DE DIRECCIÓN 1
 #  Diagnostica un volante duro y problemas de dirección asistida
 class SistemaDireccion1(SistemaBase):

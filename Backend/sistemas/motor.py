@@ -1,7 +1,22 @@
 from experta import *
 from core.base import SistemaBase
 from hechos import *
+"""
+Sistema especialista para el diagnóstico del sistema de motor.
 
+Este módulo define varios subconjuntos de reglas (motor1, motor2,
+etc.), cada uno enfocado en un grupo de síntomas específicos como:
+
+- No arranca.
+- Se apaga.
+- Emite humo negro.
+- emite humo azul.
+- emite humo blanco.
+- vibra excesivamente.
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
 ### Para el síntoma "no_arranca"
 class SistemaMotor1(SistemaBase):
     def __init__(self):

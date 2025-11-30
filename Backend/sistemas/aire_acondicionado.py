@@ -1,7 +1,19 @@
 from experta import *
 from core.base import SistemaBase
 from hechos import *
+"""
+Sistema especialista para el diagnóstico del sistema de aire acondicionado.
 
+Este módulo define varios subconjuntos de reglas (acondicionado1, acondicionado2,
+etc.), cada uno enfocado en un grupo de síntomas específicos como:
+- No enfria .
+- Aire huele mal.
+- compresor no arranca.
+- Compresor ruidos anormales.
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
 ### Para el síntoma "no_enfria"
 class SistemaAcondicionado1(SistemaBase):
     def __init__(self):

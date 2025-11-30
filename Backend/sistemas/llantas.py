@@ -1,7 +1,19 @@
 from experta import *
 from core.base import SistemaBase
 from hechos import *
+"""
+Sistema especialista para el diagnóstico del sistema de llantas.
 
+Este módulo define varios subconjuntos de reglas (llantas1, llantas2,
+etc.), cada uno enfocado en un grupo de síntomas específicos como:
+- llanta baja.
+- Desgaste irregular.
+- vibracion a alta velocidad.
+- Claxon o limpiaparabrisas disfuncionales.
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
 # Especialista 1: Para Llanta baja
 
 class SistemaLlantas1(SistemaBase):

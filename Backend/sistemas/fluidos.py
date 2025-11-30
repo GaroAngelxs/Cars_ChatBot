@@ -1,7 +1,19 @@
 from experta import *
 from core.base import SistemaBase
 from hechos import *
+"""
+Sistema especialista para el diagnóstico del sistema de fluidos.
 
+Este módulo define varios subconjuntos de reglas (fluidos1, fluidos2,
+etc.), cada uno enfocado en un grupo de síntomas específicos como:
+- nivel aceite bajo.
+- liquido de frenos bajo .
+- Refrigerante marron.
+- liquido de direccion oscuro.
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
 ### Para el síntoma "nivel_aceite_bajo"
 class SistemaFluidos1(SistemaBase):
     def __init__(self):

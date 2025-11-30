@@ -2,6 +2,23 @@ from experta import *
 from core.base import SistemaBase
 from hechos import *
 
+"""
+Sistema especialista para el diagnóstico del sistema de suspencion.
+
+Este módulo define varios subconjuntos de reglas (suspencion1, suspencion2,
+etc.), cada uno enfocado en un grupo de síntomas específicos como:
+
+- vibracion en el volante.
+- volante duro.
+- Inclinacion al girar.
+- golpeteo en baches.
+- Desvio del vehiculo.
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
+
+
 # --- 1. VIBRACIÓN EN EL VOLANTE (SistemaSuspension1) ---
 class SistemaSuspension1(SistemaBase):
     @Rule(Sistema(area='suspension_1'),

@@ -1,7 +1,19 @@
 from experta import *
 from core.base import SistemaBase
 from hechos import *
+"""
+Sistema especialista para el diagnóstico del sistema electrico.
 
+Este módulo define varios subconjuntos de reglas (electrico1, electrico2,
+etc.), cada uno enfocado en un grupo de síntomas específicos como:
+- No enciende.
+- Luces parpadean.
+- luces de faros tenues.
+- Claxon o limpiaparabrisas disfuncionales.
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
 ### Para el síntoma "no_enciende"
 class SistemaElectrico1(SistemaBase):
     def __init__(self):

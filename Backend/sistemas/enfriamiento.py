@@ -1,7 +1,19 @@
 from experta import *
 from core.base import SistemaBase
 from hechos import *
+"""
+Sistema especialista para el diagnóstico del sistema de enfriamiento.
 
+Este módulo define varios subconjuntos de reglas (enfriamiento1, enfriamiento2,
+etc.), cada uno enfocado en un grupo de síntomas específicos como:
+- Signos de sobrecalentamiento.
+- Fugas anticongelante.
+- ventilador enciende.
+- Claxon o limpiaparabrisas disfuncionales.
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
 #  SISTEMA DE ENFRIAMIENTO 1
 #  Diagnostica problemas relacionados con sobrecalentamiento
 class SistemaEnfriamiento1(SistemaBase):

@@ -4,7 +4,20 @@ from hechos import *
 
 ### Sistema de combustible
 # Basado en reglas del PDF (Sistema de combustible 1–8).
+"""
+Sistema especialista para el diagnóstico del sistema de combustible.
 
+Este módulo define varios subconjuntos de reglas (combustible1, combustible2,
+etc.), cada uno enfocado en un grupo de síntomas específicos como:
+
+- Tarda en arrancar.
+- Consumo combustible alto.
+- olor a gasolina.
+- Pierde potencia en pendientes.
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
 # Grupo 1: Arranque tardío (Reglas 1–2)
 class SistemaCombustible1(SistemaBase):
     def __init__(self):

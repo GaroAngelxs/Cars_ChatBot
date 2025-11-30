@@ -1,7 +1,19 @@
 from experta import *
 from core.base import SistemaBase
 from hechos import *
+"""
+Sistema especialista para el diagnóstico del sistema de escape.
 
+Este módulo define varios subconjuntos de reglas (escape1, escape2,
+etc.), cada uno enfocado en un grupo de síntomas específicos como:
+- Ruido fuerte escape.
+- olor a gases.
+- humo escape oscupo.
+- Claxon o limpiaparabrisas disfuncionales.
+
+Cada clase hereda de SistemaBase y utiliza hechos Estado/Pregunta para
+interactuar con el usuario y generar diagnósticos estructurados.
+"""
 ### Para el síntoma "ruido_fuerte_escape"
 class SistemaEscape1(SistemaBase):
     def __init__(self):
