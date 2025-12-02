@@ -190,10 +190,18 @@ def main(page: ft.Page):
 
     # Funciones de logica
 
-    def mostrar_mensaje(texto, color=ft.Colors.RED): 
-        page.snack_bar = ft.SnackBar(ft.Text(texto), bgcolor=color)
-        page.snack_bar.open = True
-        page.update()
+    def mostrar_mensaje(title,texto): 
+        dlg_modal = ft.AlertDialog(
+        modal=True,
+        title=ft.Text(title),
+        content=ft.Text(texto),
+        actions=[
+            ft.TextButton("Cerrar", on_click=lambda e: page.close(dlg_modal)),
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+        )
+        page.open(dlg_modal)
+
 
     def actualizar_progreso(valor):
         progress_bar.value = valor
@@ -236,11 +244,11 @@ def main(page: ft.Page):
         elif 'diagnosticos' in resultado:
             mostrar_pantalla_diagnostico(resultado['diagnosticos'])
         else:
-            mostrar_mensaje("Error Crítico: Estado inválido del motor de inferencia.")
+            mostrar_mensaje("Error Crítico", "Estado inválido del motor de inferencia.")
 
     def enviar_respuesta(clave, valor):
         if not valor:
-            mostrar_mensaje("Por favor, selecciona una opción para continuar.", ft.Colors.ORANGE) 
+            mostrar_mensaje("Ups...","Por favor, selecciona una opción para continuar.") 
             return
             
         respuesta = {'clave': clave, 'valor': valor}
@@ -337,17 +345,17 @@ def main(page: ft.Page):
 
         def on_confirmar(e):
             clave = pregunta['clave']
-            valor = ""
+            
             if es_multiselect:
                 seleccionados = [c.data for c in controles_opciones if c.value]
                 valor = ",".join(seleccionados)
             else:
                 valor = controles_opciones[0].value
-
             enviar_respuesta(clave, valor)
 
         content = ft.Container(
-            content=ft.Column([
+            content=ft.Column(
+                [
                 ft.Row([
                     ft.Icon(ft.Icons.QUESTION_ANSWER, size=40, color=COLOR_ACCENT),
                     ft.Container(
@@ -362,11 +370,12 @@ def main(page: ft.Page):
                     "Confirmar Respuesta",
                     icon=ft.Icons.CHECK,
                     on_click=on_confirmar,
-                    style=ft.ButtonStyle(bgcolor=COLOR_CONFIRM, color="white", padding=20),
+                    style=ft.ButtonStyle(bgcolor=COLOR_CONFIRM, color="white", padding=10),
                     width=None,
                     expand=True
                 )
-            ]),
+            ],horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            ),
             bgcolor=COLOR_BG_CARD,
             padding=40,
             border_radius=10,
@@ -435,7 +444,9 @@ def main(page: ft.Page):
                     style=ft.ButtonStyle(bgcolor=COLOR_ACCENT, color="white", padding=20),
                     width=None
                 )
-            ]),
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+            ),
             bgcolor=COLOR_BG_CARD,
             padding=30,
             border_radius=10,
